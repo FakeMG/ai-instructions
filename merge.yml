@@ -1,0 +1,36 @@
+# merge.yml — place this file in your destination folder
+
+# -------------------------------------------------------------------
+# REQUIRED
+# -------------------------------------------------------------------
+
+# Path to your local clone of the AI instruction repo.
+# Can be absolute (C:\repos\ai-instructions) or relative to THIS file.
+repo_path: D:\Projects\ai-instructions
+
+# Which files from the repo to merge, in order.
+files:
+  - agent-behaviors-unity.md
+  - coding-convention.md
+
+# -------------------------------------------------------------------
+# OPTIONAL
+# -------------------------------------------------------------------
+
+# Output filename written into this destination folder. Default: merged-instructions.md
+output: AGENTS.md
+
+# Adds a heading with timestamp + source list at the top of the merged file.
+title: ""
+
+# Text inserted between each merged section. Default is a horizontal rule.
+separator: "\n"
+
+# Adds a <!-- SOURCE: filename.md --> comment before each section. Default: true
+add_headers: false
+
+# Run `git pull` on the repo before merging. Default: true
+auto_pull: true
+
+# Exit with error if a listed file is missing. Default: true
+fail_on_missing: false
