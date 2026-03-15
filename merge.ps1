@@ -1,5 +1,6 @@
 # merge.ps1
-# Place this in the root of your AI instruction repo.
+# Fetches AI instruction files directly from a remote GitHub repo and merges them.
+# No git install required. Uses GitHub's REST API over HTTPS.
 #
 # Usage:
 #   .\merge.ps1                              # looks for merge.yml in current directory
@@ -14,19 +15,22 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-# Minimal YAML parser
+# ---------------------------------------------------------------------------
+# YAML parser
+# ---------------------------------------------------------------------------
 function Parse-MergeYaml {
     param([string]$FilePath)
 
     $config = @{
-        repo_path        = $null
-        files            = @()
-        output           = "merged-instructions.md"
-        title            = $null
-        separator        = "`n`n---`n`n"
-        add_headers      = $true
-        auto_pull        = $true
-        fail_on_missing  = $true
+        repo         = $null
+        branch       = "main"
+        token        = $null
+        files        = @()
+        output       = "merged-instructions.md"
+        title        = $null
+        separator    = "`n`n---`n`n"
+        add_headers  = $true
+        fail_on_missing = $true
     }
 
     $currentKey = $null
@@ -35,28 +39,25 @@ function Parse-MergeYaml {
         $line = $raw.TrimEnd()
         if (-not $line -or $line.TrimStart().StartsWith("#")) { continue }
 
-        # List item
         if ($line -match '^\s*-\s+(.+)$') {
             $val = $Matches[1].Trim().Trim('"').Trim("'")
-            if ($currentKey -eq "files") {
-                $config.files += $val
-            }
+            if ($currentKey -eq "files") { $config.files += $val }
             continue
         }
 
-        # Key: value
         if ($line -match '^([a-zA-Z_][a-zA-Z0-9_]*):\s*(.*)$') {
             $currentKey = $Matches[1]
             $val = $Matches[2].Trim().Trim('"').Trim("'")
 
             switch ($currentKey) {
-                "repo_path"       { $config.repo_path       = $val }
+                "repo"            { $config.repo            = $val -replace "^https?://github\.com/", "" -replace "/$", "" }
+                "branch"          { if ($val) { $config.branch = $val } }
+                "token"           { $config.token           = $val }
                 "output"          { if ($val) { $config.output = $val } }
-                "title"           { $config.title            = $val }
-                "separator"       { $config.separator        = $val -replace '\\n', "`n" }
-                "add_headers"     { $config.add_headers      = $val -ne "false" }
-                "auto_pull"       { $config.auto_pull        = $val -ne "false" }
-                "fail_on_missing" { $config.fail_on_missing  = $val -ne "false" }
+                "title"           { $config.title           = $val }
+                "separator"       { $config.separator       = $val -replace '\\n', "`n" }
+                "add_headers"     { $config.add_headers     = $val -ne "false" }
+                "fail_on_missing" { $config.fail_on_missing = $val -ne "false" }
                 "files"           { $config.files = @() }
             }
         }
@@ -65,24 +66,78 @@ function Parse-MergeYaml {
     return $config
 }
 
-# Run git pull on the repo
-function Invoke-GitPull {
-    param([string]$RepoPath)
+# ---------------------------------------------------------------------------
+# Fetch the full file tree from GitHub (one API call, cached per run)
+# ---------------------------------------------------------------------------
+function Get-RepoTree {
+    param(
+        [string]$Repo,
+        [string]$Branch,
+        [string]$Token
+    )
+
+    $url     = "https://api.github.com/repos/$Repo/git/trees/${Branch}?recursive=1"
+    $headers = @{ "User-Agent" = "ai-merge-ps" }
+    if ($Token) { $headers["Authorization"] = "token $Token" }
+
     try {
-        $out = & git -C $RepoPath pull --ff-only 2>&1 | Select-Object -First 1
-        Write-Host "  [OK] git pull: $out" -ForegroundColor Green
+        $resp = Invoke-RestMethod -Uri $url -Headers $headers -Method Get
     }
     catch {
-        Write-Warning "  [WARN] git pull failed (continuing anyway): $_"
+        $msg = $_.Exception.Message
+        if ($msg -match "404") {
+            Write-Error "Repo or branch not found: $Repo @ $Branch`nCheck your 'repo' and 'branch' settings in merge.yml."
+        }
+        elseif ($msg -match "401|403") {
+            Write-Error "GitHub API access denied. Add a 'token' to merge.yml for private repos."
+        }
+        else {
+            Write-Error "GitHub API error: $msg"
+        }
+        exit 1
     }
+
+    # Return hashtable: filename -> full path in repo
+    $index = @{}
+    foreach ($item in $resp.tree) {
+        if ($item.type -eq "blob") {
+            $name = [System.IO.Path]::GetFileName($item.path)
+            if (-not $index.ContainsKey($name)) {
+                $index[$name] = @($item.path)
+            }
+            else {
+                $index[$name] += $item.path
+            }
+        }
+    }
+    return $index
 }
 
-# Merge files for one destination folder
+# ---------------------------------------------------------------------------
+# Fetch raw file content from GitHub
+# ---------------------------------------------------------------------------
+function Get-FileContent {
+    param(
+        [string]$Repo,
+        [string]$Branch,
+        [string]$FilePath,
+        [string]$Token
+    )
+
+    $url     = "https://raw.githubusercontent.com/$Repo/$Branch/$FilePath"
+    $headers = @{ "User-Agent" = "ai-merge-ps" }
+    if ($Token) { $headers["Authorization"] = "token $Token" }
+
+    return Invoke-RestMethod -Uri $url -Headers $headers -Method Get
+}
+
+# ---------------------------------------------------------------------------
+# Core merge logic for one destination folder
+# ---------------------------------------------------------------------------
 function Invoke-Merge {
     param([string]$DestDir)
 
     $configPath = Join-Path $DestDir "merge.yml"
-
     if (-not (Test-Path $configPath)) {
         Write-Error "No merge.yml found in: $DestDir"
         exit 1
@@ -90,8 +145,8 @@ function Invoke-Merge {
 
     $config = Parse-MergeYaml $configPath
 
-    if (-not $config.repo_path) {
-        Write-Error "merge.yml is missing required field: repo_path"
+    if (-not $config.repo) {
+        Write-Error "merge.yml is missing required field: repo (e.g. owner/repo-name)"
         exit 1
     }
     if ($config.files.Count -eq 0) {
@@ -99,66 +154,59 @@ function Invoke-Merge {
         exit 1
     }
 
-    # Resolve repo path relative to the destination folder
-    if ([System.IO.Path]::IsPathRooted($config.repo_path)) {
-        $resolvedRepo = $config.repo_path
-    }
-    else {
-        $resolvedRepo = [System.IO.Path]::GetFullPath((Join-Path $DestDir $config.repo_path))
-    }
-
-    if (-not (Test-Path $resolvedRepo)) {
-        Write-Error "repo_path does not exist: $resolvedRepo"
-        exit 1
-    }
+    # Token can also come from environment variable GITHUB_TOKEN
+    $token = $config.token
+    if (-not $token -and $env:GITHUB_TOKEN) { $token = $env:GITHUB_TOKEN }
 
     Write-Host ""
-    Write-Host "[>>] Destination : $DestDir"     -ForegroundColor Cyan
-    Write-Host "[>>] Repo        : $resolvedRepo" -ForegroundColor Cyan
+    Write-Host "[>>] Destination : $DestDir"                          -ForegroundColor Cyan
+    Write-Host "[>>] Repo        : $($config.repo) @ $($config.branch)" -ForegroundColor Cyan
+    Write-Host "  [~] Fetching file tree from GitHub..."              -ForegroundColor DarkCyan
 
-    if ($config.auto_pull) {
-        Write-Host "  [~] Pulling latest..." -ForegroundColor DarkCyan
-        Invoke-GitPull $resolvedRepo
-    }
+    $tree = Get-RepoTree -Repo $config.repo -Branch $config.branch -Token $token
 
     $parts   = [System.Collections.Generic.List[string]]::new()
     $missing = @()
 
-    # Optional title block
     if ($config.title) {
         $ts      = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         $srcList = $config.files -join ", "
-        $parts.Add("# $($config.title)`n`n> Auto-generated on $ts  `n> Sources: $srcList")
+        $parts.Add("# $($config.title)`n`n> Auto-generated on $ts`n> Source: $($config.repo) @ $($config.branch)`n> Files: $srcList")
     }
 
     foreach ($file in $config.files) {
-        # Search recursively for a file matching this name anywhere in the repo
-        $hits = @(Get-ChildItem -Path $resolvedRepo -Filter $file -Recurse -File -ErrorAction SilentlyContinue)
-
-        if ($hits.Count -eq 0) {
+        if (-not $tree.ContainsKey($file)) {
             $missing += $file
-            Write-Warning "  [SKIP] Not found anywhere in repo: $file"
+            Write-Warning "  [SKIP] Not found in repo: $file"
             continue
         }
 
-        if ($hits.Count -gt 1) {
-            $allPaths = ($hits | ForEach-Object { $_.FullName }) -join ", "
-            Write-Warning "  [WARN] Multiple matches for '$file' - using first found: $($hits[0].FullName)"
-            Write-Warning "         All matches: $allPaths"
+        $paths = $tree[$file]
+
+        if ($paths.Count -gt 1) {
+            Write-Warning "  [WARN] Multiple matches for '$file' - using first found: $($paths[0])"
+            Write-Warning "         All matches: $($paths -join ', ')"
         }
 
-        $filePath = $hits[0].FullName
-        $relPath  = $filePath.Substring($resolvedRepo.Length).TrimStart([char]'\',[char]'/')
-        $content  = (Get-Content $filePath -Raw).TrimEnd()
+        $repoFilePath = $paths[0]
+
+        try {
+            $content = (Get-FileContent -Repo $config.repo -Branch $config.branch -FilePath $repoFilePath -Token $token).TrimEnd()
+        }
+        catch {
+            Write-Warning "  [SKIP] Failed to fetch $repoFilePath : $_"
+            $missing += $file
+            continue
+        }
 
         if ($config.add_headers) {
-            $parts.Add("<!-- SOURCE: $relPath -->`n`n$content")
+            $parts.Add("<!-- SOURCE: $repoFilePath -->`n`n$content")
         }
         else {
             $parts.Add($content)
         }
 
-        Write-Host "  [OK] Merged: $relPath" -ForegroundColor Green
+        Write-Host "  [OK] Fetched & merged: $repoFilePath" -ForegroundColor Green
     }
 
     if ($missing.Count -gt 0 -and $config.fail_on_missing) {
@@ -176,11 +224,13 @@ function Invoke-Merge {
     Write-Host ""
 }
 
+# ---------------------------------------------------------------------------
 # Entry point
+# ---------------------------------------------------------------------------
 if ($All) {
     $root  = Resolve-Path $All
     $found = @(Get-ChildItem -Path $root -Directory |
-             Where-Object { Test-Path (Join-Path $_.FullName "merge.yml") })
+               Where-Object { Test-Path (Join-Path $_.FullName "merge.yml") })
 
     if ($found.Count -eq 0) {
         Write-Error "No subfolders with merge.yml found under: $root"
