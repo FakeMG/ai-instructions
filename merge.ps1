@@ -229,8 +229,11 @@ function Invoke-Merge {
 # ---------------------------------------------------------------------------
 if ($All) {
     $root  = Resolve-Path $All
-    $found = @(Get-ChildItem -Path $root -Directory |
-               Where-Object { Test-Path (Join-Path $_.FullName "merge.yml") })
+    # Search all nested subfolders for merge.yml in one pass.
+    # Get-ChildItem -Recurse -Filter finds only the files we care about,
+    # avoiding a separate Test-Path call per directory.
+    $found = @(Get-ChildItem -Path $root -Filter "merge.yml" -Recurse -File -ErrorAction SilentlyContinue |
+               ForEach-Object { $_.DirectoryName })
 
     if ($found.Count -eq 0) {
         Write-Error "No subfolders with merge.yml found under: $root"
@@ -238,7 +241,7 @@ if ($All) {
     }
 
     Write-Host "[>>] Found $($found.Count) destination(s) under $root" -ForegroundColor Yellow
-    foreach ($dir in $found) { Invoke-Merge $dir.FullName }
+    foreach ($dir in $found) { Invoke-Merge $dir }
 
 }
 elseif ($Dest) {
@@ -247,3 +250,4 @@ elseif ($Dest) {
 else {
     Invoke-Merge (Get-Location).Path
 }
+Read-Host "Press Enter to close"
