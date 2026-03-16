@@ -13,6 +13,8 @@ repo: FakeMG/ai-instructions
 files:
   - agent-behaviors-unity.md
   - coding-convention.md
+  - unity-coding-convention.md
+  - unity-techstack.md
 
 # -------------------------------------------------------------------
 # OPTIONAL
