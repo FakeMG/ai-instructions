@@ -1,11 +1,27 @@
 # General Coding Guidelines
 
+## Modular and Decoupled
+- **Dependency Injection:** Separate Construction from Use. Classes should not resolve their own dependencies; they must be assigned via Inspector, constructor, or method parameters.
+- **Composition over Inheritance:** Structure code by combining small components rather than deep inheritance hierarchies.
+- **SOLID Principles:** Strictly adhere to Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion.
+- **LCOM4:** Ensure high cohesion. If methods in a class operate on distinct sets of fields, split them into separate classes.
+- **Abstraction:** Depend on abstractions rather than concrete implementations to reduce coupling and increase testability. Only abstract things that have multiple implementations or are likely to have multiple implementations in the future.
+
+## Single Source of Truth / DRY
+- Ensure every piece of knowledge or logic has a single, unambiguous representation within the system to avoid synchronization errors.
+
+## Validating early and often / Early feedback
+- Validate features by writing and running tests for your code. If you can't write tests, at least validate it yourself by running it and checking the results.
+  - Only write tests for important logic. Avoid writing tests for trivial getters/setters or simple data structures.
+  - Extract logic that needs testing into testable classes (POCOs) to make it easier to write tests.
+  - For features that you can't validate by testing yourself, ask the user to validate it for you.
+- Validate code structure to ensure it adheres to the guidelines. If you see code that violates these guidelines, refactor it to comply.
+- Avoid silent failures. If something goes wrong, it should be obvious and easy to diagnose early. Don't let errors go unnoticed.
+
 ## Code Quality & Style
 - **Comments:** Do NOT explain *what* code does. Use comments only to explain *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
 - **Self-Documenting:** Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
 - **Constants:** Use named constants; avoid magic numbers or strings.
-- **Single Source of Truth (SSOT) / DRY:** Ensure every piece of knowledge or logic has a single, unambiguous representation within the system to avoid synchronization errors.
-- **Dependency Injection:** Separate Construction from Use. Classes should not resolve their own dependencies; they must be assigned via Inspector, constructor, or method parameters.
 - **Properties:** Avoid public fields; use properties with appropriate accessors.
 - **Event Handling:** Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
 
@@ -18,13 +34,6 @@
 - **Constants:** Must be written in ALL_CAPS (e.g., `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT_SECONDS`).
 - **Consistency:** Use consistent terminology throughout the codebase.
 - **Event Handler:** When subscribing to events, name the handler based on the action it performs. (e.g., instead of `OnPlayerCaught`, use a name like `PunishPlayerWhenCaught` or `TriggerPunishment`).
-
-## Architecture & OOP
-- **Composition over Inheritance:** Structure code by combining small components rather than deep inheritance hierarchies.
-- **SOLID Principles:** Strictly adhere to Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion.
-- **LCOM4:** Ensure high cohesion. If methods in a class operate on distinct sets of fields, split them into separate classes.
-- **Framework Independence:** Frameworks should not dominate your architecture. Don't let the framework's design dictate your domain logic. Your business rules should be written in "plain" code.
-- **Humble Object Pattern:** Extract logic into easy-to-test classes (POCOs/Plain classes), leaving the framework-dependent classes (like MonoBehaviours) as "humble" wrappers with minimal logic.
 
 ## Methods
 - **Size:** Methods must be small, focused on a single task, and at a single level of abstraction.
