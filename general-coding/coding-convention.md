@@ -11,7 +11,8 @@
 - Ensure every piece of knowledge or logic has a single, unambiguous representation within the system to avoid synchronization errors.
 
 ## Validating early and often / Early feedback
-- Validate features by writing and running tests for your code. If you can't write tests, at least validate it yourself by running it and checking the results.
+- After every session, you MUST validate your work. DO NOT skip this step.
+- Validate features by writing and running tests for your code.
   - Only write tests for important logic. Avoid writing tests for trivial getters/setters or simple data structures.
   - Extract logic that needs testing into testable classes (POCOs) to make it easier to write tests.
   - For features that you can't validate by testing yourself, ask the user to validate it for you.
