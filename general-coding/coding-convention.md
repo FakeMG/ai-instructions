@@ -324,6 +324,7 @@
 
 **Avoid:**
 - Avoid testing private or internal methods directly — if they need testing, they likely belong in a separate class.
+- Avoid using reflection or any framework/library API that bypasses the public interface in tests — if you need it to reach into a class, the design needs to change instead.
   ```csharp
   // ❌ Bad — bypasses access modifiers to test implementation details
   var method = typeof(HealthHandler).GetMethod("ClampHealth", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -352,23 +353,6 @@
   // ❌ Bad — Attacker instantiates its own Weapon; test can't control or verify it
   var attacker = new Attacker();  // internally does: _weapon = new Shotgun();
   attacker.Attack(enemy);
-  ```
-
----
-
-**Do:**
-- Avoid using reflection in tests — if you need it to reach into a class, the design needs to change instead.
-  ```csharp
-  // ✅ Good — redesign exposes what's needed through a proper public interface
-  Assert.AreEqual(ExpectedState.Ready, system.State);
-  ```
-
-**Avoid:**
-- Avoid using reflection to access private state or methods in tests — it breaks encapsulation and makes tests fragile to refactoring.
-  ```csharp
-  // ❌ Bad — reflection couples the test to internal implementation details
-  var field = typeof(CombatSystem).GetField("_isReady", BindingFlags.NonPublic | BindingFlags.Instance);
-  Assert.IsTrue((bool)field.GetValue(system));
   ```
 
 ---
