@@ -310,6 +310,70 @@
 ---
 
 **Do:**
+- Only test public functions — they represent the contract of the class and are what consumers depend on.
+  ```csharp
+  // ✅ Good — tests the public-facing behavior
+  [Test]
+  public void TakeDamage_ReducesHealth()
+  {
+      var health = new HealthHandler(maxHealth: 100);
+      health.TakeDamage(30);
+      Assert.AreEqual(70, health.Current);
+  }
+  ```
+
+**Avoid:**
+- Avoid testing private or internal methods directly — if they need testing, they likely belong in a separate class.
+  ```csharp
+  // ❌ Bad — bypasses access modifiers to test implementation details
+  var method = typeof(HealthHandler).GetMethod("ClampHealth", BindingFlags.NonPublic | BindingFlags.Instance);
+  method.Invoke(handler, new object[] { -10 });
+  ```
+
+---
+
+**Do:**
+- Inject dependencies into the class under test so behavior can be verified in isolation.
+  ```csharp
+  // ✅ Good — fake dependency injected, test is fully isolated. You may want to use framework that is already in the project.
+  [Test]
+  public void Attack_CallsWeaponHit()
+  {
+      var fakeWeapon = Substitute.For<IWeapon>();
+      var attacker = new Attacker(fakeWeapon);
+      attacker.Attack(enemy);
+      fakeWeapon.Received(1).Hit(enemy);
+  }
+  ```
+
+**Avoid:**
+- Avoid letting the class under test create its own dependencies — this makes tests brittle and couples them to real implementations.
+  ```csharp
+  // ❌ Bad — Attacker instantiates its own Weapon; test can't control or verify it
+  var attacker = new Attacker();  // internally does: _weapon = new Shotgun();
+  attacker.Attack(enemy);
+  ```
+
+---
+
+**Do:**
+- Avoid using reflection in tests — if you need it to reach into a class, the design needs to change instead.
+  ```csharp
+  // ✅ Good — redesign exposes what's needed through a proper public interface
+  Assert.AreEqual(ExpectedState.Ready, system.State);
+  ```
+
+**Avoid:**
+- Avoid using reflection to access private state or methods in tests — it breaks encapsulation and makes tests fragile to refactoring.
+  ```csharp
+  // ❌ Bad — reflection couples the test to internal implementation details
+  var field = typeof(CombatSystem).GetField("_isReady", BindingFlags.NonPublic | BindingFlags.Instance);
+  Assert.IsTrue((bool)field.GetValue(system));
+  ```
+
+---
+
+**Do:**
 - Make failures obvious and easy to diagnose early.
   ```csharp
   // ✅ Good — asserts loudly if a required dependency is missing
