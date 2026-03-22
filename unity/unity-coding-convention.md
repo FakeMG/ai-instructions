@@ -176,6 +176,56 @@
 
 ----------------------------------------------------------------------------------
 
+## Exception Handling
+
+**Do:**
+- Use guard clauses and `TryGetComponent` instead of exceptions for expected runtime conditions.
+  ```csharp
+  // ✅ Good — no allocation, no stack unwind, reads cleanly
+  private void Update()
+  {
+      if (!TryFindTarget(out var target)) return;
+      MoveToward(target);
+  }
+  ```
+
+**Avoid:**
+- Avoid throwing exceptions inside runtime loops (`Update`, `FixedUpdate`, coroutines) — they are expensive, allocate heap memory, and can trigger GC spikes.
+  ```csharp
+  // ❌ Bad — exception thrown every frame if target is missing
+  private void Update()
+  {
+      var target = FindTarget(); // throws if none found
+      MoveToward(target);
+  }
+  ```
+
+---
+
+**Do:**
+- Use return values or result patterns for expected or recoverable outcomes.
+  ```csharp
+  // ✅ Good — caller decides what to do when none exists
+  public bool TryFindNearestEnemy(out Enemy enemy)
+  {
+      enemy = _enemies.Count > 0 ? _enemies[0] : null;
+      return enemy != null;
+  }
+  ```
+
+**Avoid:**
+- Avoid using exceptions for expected or recoverable outcomes — they are not control flow.
+  ```csharp
+  // ❌ Bad — exception used as control flow for a normal case
+  public Enemy FindNearestEnemy()
+  {
+      if (_enemies.Count == 0) throw new InvalidOperationException("No enemies found.");
+      return _enemies[0];
+  }
+  ```
+
+----------------------------------------------------------------------------------
+
 ## Asset Management (Addressables)
 
 **Do:**
