@@ -77,15 +77,15 @@
 - Depend on abstractions rather than concrete implementations to reduce coupling and increase testability.
   ```csharp
   // ✅ Good — depends on the interface
-  private readonly IWeapon _weapon;
+  public class EnemyAI
+  {
+      private readonly IWeapon _weapon;
+      private void Attack() { _weapon.Hit(); }
+  }
   ```
 
 **Avoid:**
 - Avoid abstracting things that don't have (or won't likely have) multiple implementations — premature abstraction adds indirection for no gain.
-  ```csharp
-  // ❌ Bad — depends on the concrete type, hard to swap or test
-  private readonly Shotgun _weapon;
-  ```
 
 ---
 
@@ -133,24 +133,6 @@
   // In PlayerSpawner:   player.health = 100;
   // In HealthPickup:    player.health = 100;
   // In SaveSystem:      if (data.health > 100) ...
-  ```
-
----
-
-**Do:**
-- Use named constants.
-  ```csharp
-  // ✅ Good
-  private const float GRAVITY_SCALE = 2.5f;
-  rb.gravityScale = GRAVITY_SCALE;
-  ```
-
-**Avoid:**
-- Avoid using magic numbers or strings.
-  ```csharp
-  // ❌ Bad — what does 2.5 mean? What is "MainMenu"?
-  rb.gravityScale = 2.5f;
-  if (scene == "MainMenu") { ... }
   ```
 
 ---
@@ -254,28 +236,6 @@
       case EnemyType.Goblin: enemy.Speed = 3f;   break;
       case EnemyType.Orc:    enemy.Speed = 1f;   break;
       case EnemyType.Troll:  enemy.Speed = 0.5f; break;
-  }
-  ```
-
----
-
-**Do:**
-- Override base class behavior in a way that fulfills the parent's contract (Liskov Substitution Principle).
-  ```csharp
-  // ✅ Good — subclass refines behavior without breaking the contract
-  public class SilentEnemy : Enemy
-  {
-      public override void Alert() { /* plays no sound but still executes alert logic */ }
-  }
-  ```
-
-**Avoid:**
-- Avoid overriding base class behavior in ways that break the parent's contract (violates Liskov Substitution).
-  ```csharp
-  // ❌ Bad — callers of Enemy.Alert() cannot trust this subclass
-  public class SilentEnemy : Enemy
-  {
-      public override void Alert() => throw new NotSupportedException();
   }
   ```
 
@@ -388,7 +348,7 @@
   // ✅ Good — target may be destroyed at runtime, guard is valid
   public void SetTarget(Enemy target)
   {
-      if (!target) return;
+      if (!target) { Debug.LogError("Target is null."); return; }
       _currentTarget = target;
   }
   ```
@@ -454,68 +414,31 @@
 
 **Do:**
 - Use comments only to explain *why* a complex decision was made, to warn of pitfalls, or to highlight critical non-obvious details.
+- Use clear naming conventions to make code self-documenting.
+- Use properties with appropriate accessors.
+- Always pair event subscriptions with unsubscriptions.  
+  
   ```csharp
   // ✅ Good — explains a non-obvious design decision
   // We delay by one frame here because the Animator state machine
   // hasn't initialized yet at the point Awake is called.
   await UniTask.Yield();
   ```
-
-**Avoid:**
-- Avoid using comments to explain *what* code does.
-  ```csharp
-  // ❌ Bad — comment just restates the code
-  // Check if the player is dead
-  if (IsDead()) { ... }
-  ```
-
----
-
-**Do:**
-- Use clear naming conventions to make code self-documenting.
   ```csharp
   // ✅ Good — reads like plain English
   if (IsDead()) TriggerDeathSequence();
   ```
 
 **Avoid:**
+- Avoid using comments to explain *what* code does.
 - Avoid using cryptic or abbreviated names that require a comment to explain.
-  ```csharp
-  // ❌ Bad — what is p? What is ds()?
-  if (p.d) ds();
-  ```
-
----
-
-**Do:**
-- Use properties with appropriate accessors.
-  ```csharp
-  // ✅ Good — controlled access
-  public float Health { get; private set; }
-  ```
-
-**Avoid:**
 - Avoid using public fields.
-  ```csharp
-  // ❌ Bad — any code anywhere can mutate this freely
-  public float Health;
-  ```
-
----
-
-**Do:**
-- Always pair event subscriptions with unsubscriptions.
-  ```csharp
-  // ✅ Good — symmetric subscribe/unsubscribe
-  private void OnEnable()  => _enemy.OnDied += HandleEnemyDied;
-  private void OnDisable() => _enemy.OnDied -= HandleEnemyDied;
-  ```
-
-**Avoid:**
 - Avoid using lambda expressions for event handlers — they can't be unsubscribed, causing memory leaks.
+  
   ```csharp
-  // ❌ Bad — impossible to unsubscribe this lambda later
-  private void OnEnable() => _enemy.OnDied += () => HandleEnemyDied();
+  // ❌ Bad — comment just restates the code
+  // Check if the player is dead
+  if (IsDead()) { ... }
   ```
 
 ----------------------------------------------------------------------------------
@@ -582,21 +505,9 @@
 
 **Do:**
 - Minimize arguments — ideal: 0, good: 1, acceptable: 2.
-  ```csharp
-  // ✅ Good — data the method needs is already on the class
-  public void ApplyDamage(float amount)
-  {
-      Health -= amount;
-      TriggerHitEffect();
-  }
-  ```
 
 **Avoid:**
-- Avoid using 3+ arguments — it signals the method is doing too much or data should be grouped.
-  ```csharp
-  // ❌ Bad — too many arguments; wrap into a context object instead
-  public void ApplyDamage(float amount, bool isCrit, DamageType type, GameObject source) { ... }
-  ```
+- Avoid using 3+ arguments — it signals the method is doing too much or data should be grouped into a context object.
 
 ---
 
@@ -629,15 +540,6 @@
   private void StartLevel() { SpawnEnemies(); StartTimer(); }
   private void SpawnEnemies() { ... }
   private void StartTimer() { ... }
-  ```
-
-**Avoid:**
-- Avoid scattering callee methods above their callers, forcing readers to jump around the file.
-  ```csharp
-  // ❌ Bad — reader hits SpawnEnemies before knowing what calls it
-  private void SpawnEnemies() { ... }
-  private void StartTimer() { ... }
-  private void StartLevel() { SpawnEnemies(); StartTimer(); }
   ```
 
 ---

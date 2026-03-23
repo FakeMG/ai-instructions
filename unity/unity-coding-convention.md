@@ -20,19 +20,6 @@
   }
   ```
 
-**Avoid:**
-- Avoid scattering lifecycle methods throughout the class, mixed in with other methods.
-  ```csharp
-  // ❌ Bad — lifecycle methods buried among helpers
-  public class Enemy : MonoBehaviour
-  {
-      private void ApplyInitialState() { ... }
-      private void Awake() => _rigidbody = GetComponent<Rigidbody>();
-      private void CalculateDamage() { ... }
-      private void Start() => ApplyInitialState();
-  }
-  ```
-
 ---
 
 **Do:**
@@ -47,8 +34,9 @@
       private void Update() => transform.position += _brain.ComputeMovement(Time.deltaTime);
   }
 
-  public class EnemyBrain   // POCO — no Unity dependency
+  public class EnemyBrain   // POCO — with purely mathematical data and logic, no Unity dependencies
   {
+      // Unity Vector3 is pure math, acceptable in a POCO
       public Vector3 ComputeMovement(float deltaTime) { ... }
   }
   ```
@@ -68,29 +56,6 @@
               transform.position += dir * _speed * Time.deltaTime;
           }
       }
-  }
-  ```
-
----
-
-**Do:**
-- Keep purely mathematical data (e.g., `Vector3`) in the POCO for readability.
-  ```csharp
-  // ✅ Good — Vector3 is pure math, acceptable in a POCO
-  public class ProjectilePath
-  {
-      public Vector3 ComputeArc(Vector3 origin, Vector3 target, float height) { ... }
-  }
-  ```
-
-**Avoid:**
-- Avoid putting Unity Engine-dependent types (e.g., `Collider`, `Renderer`) in the POCO.
-  ```csharp
-  // ❌ Bad — POCO now requires the Unity Engine to be running
-  public class EnemyBrain
-  {
-      public Collider DetectionZone;   // Engine type leaking into POCO
-      public Renderer BodyRenderer;
   }
   ```
 
@@ -230,16 +195,6 @@
 
 **Do:**
 - Load assets using `Addressables.LoadAssetAsync<T>()`.
-  ```csharp
-  // ✅ Good
-  var handle = Addressables.LoadAssetAsync<GameObject>("EnemyPrefab");
-  await handle.Task;
-  var prefab = handle.Result;
-  ```
-
----
-
-**Do:**
 - Track the `AsyncOperationHandle` and release it when done to prevent leaks.
   ```csharp
   // ✅ Good — handle is stored and released on cleanup
@@ -249,6 +204,7 @@
   {
       _enemyHandle = Addressables.LoadAssetAsync<GameObject>("EnemyPrefab");
       await _enemyHandle.Task;
+      var prefab = _enemyHandle.Result;
   }
 
   private void OnDestroy() => Addressables.Release(_enemyHandle);
@@ -256,44 +212,16 @@
 
 ----------------------------------------------------------------------------------
 
-## Architecture Patterns
+## Decoupling
 
 **Do:**
-- Suffix ScriptableObject names with `SO`.
-  ```csharp
-  // ✅ Good — immediately identifiable as a ScriptableObject
-  [CreateAssetMenu]
-  public class EnemyDataSO : ScriptableObject { ... }
-  ```
-
-**Avoid:**
-- Avoid naming ScriptableObjects without the `SO` suffix — they become indistinguishable from regular data classes.
-  ```csharp
-  // ❌ Bad — looks like a plain C# class
-  public class EnemyData : ScriptableObject { ... }
-  ```
-
----
-
-**Do:**
-- Use C# Events for inter-system communication.
+- Use C# Events for inter-system communication instead of UnityEvents.
   ```csharp
   // ✅ Good — fast, type-safe, no reflection
   public class HealthSystem
   {
       public event Action OnDied;
       private void Die() => OnDied?.Invoke();
-  }
-  ```
-
-**Avoid:**
-- Avoid using `UnityEvent` — it's slower, uses reflection, and hides wiring in the Inspector.
-  ```csharp
-  // ❌ Bad — overhead and control flow hidden in the Inspector
-  public class HealthSystem : MonoBehaviour
-  {
-      public UnityEvent OnDied;
-      private void Die() => OnDied.Invoke();
   }
   ```
 
@@ -340,34 +268,7 @@
   }
   ```
 
----
+  ## Naming
 
 **Do:**
-- Route all cross-system communication through events, keeping each system unaware of others.
-  ```csharp
-  // ✅ Good — EnemyAI knows nothing about who is listening
-  public class EnemyAI : MonoBehaviour
-  {
-      public event Action OnDied;
-      private void Die() => OnDied?.Invoke();
-  }
-  ```
-
-**Avoid:**
-- Avoid creating direct references between systems — it creates tight coupling that makes each system impossible to reuse independently.
-  ```csharp
-  // ❌ Bad — EnemyAI is coupled to three unrelated systems
-  public class EnemyAI : MonoBehaviour
-  {
-      private SoundSystem _soundSystem;
-      private UISystem _uiSystem;
-      private QuestSystem _questSystem;
-
-      private void Die()
-      {
-          _soundSystem.PlayDeathSound();
-          _uiSystem.ShowKillFeed();
-          _questSystem.NotifyEnemyKilled();
-      }
-  }
-  ```
+- Suffix ScriptableObject names with `SO`.
