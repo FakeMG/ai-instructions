@@ -321,9 +321,9 @@
 - Make failures obvious and easy to diagnose early.
   ```csharp
   // ✅ Good — asserts loudly if a required dependency is missing
-  private void Awake()
+  private void GoodExampleFunction()
   {
-      Debug.Assert(_config != null, $"{nameof(_config)} is not assigned on {name}.");
+      if (_config == null) { Debug.LogError($"{nameof(_config)} is null, cannot apply config."); return; }
   }
   ```
 
@@ -331,83 +331,12 @@
 - Avoid allowing silent failures.
   ```csharp
   // ❌ Bad — missing config causes subtle misbehavior with no indication of why
-  private void Awake()
+  private void BadExampleFunction()
   {
       if (_config != null)
           ApplyConfig(_config);
   }
   ```
-
-----------------------------------------------------------------------------------
-
-## Simplicity vs. Defensive Complexity
-
-**Do:**
-- Validate only inputs that can legitimately be invalid at runtime.
-  ```csharp
-  // ✅ Good — target may be destroyed at runtime, guard is valid
-  public void SetTarget(Enemy target)
-  {
-      if (!target) { Debug.LogError("Target is null."); return; }
-      _currentTarget = target;
-  }
-  ```
-
-**Avoid:**
-- Avoid adding guards just to "be safe" on things that are always valid by construction.
-  ```csharp
-  // ❌ Bad — _config is injected in Awake, this guard is noise
-  private void Update()
-  {
-      if (_config == null) return;
-      ApplyConfig(_config);
-  }
-  ```
-
----
-
-**Do:**
-- Fail fast with early returns to keep the happy path unindented and readable.
-  ```csharp
-  // ✅ Good — guard at the top, logic flows cleanly below
-  public void Attack(Enemy enemy)
-  {
-      if (!IsAlive()) return;
-      _weapon.Hit(enemy);
-  }
-  ```
-
-**Avoid:**
-- Avoid writing guard chains that obscure the actual logic by burying it under layers of validation.
-  ```csharp
-  // ❌ Bad — actual logic is buried three levels deep
-  public void Attack(Enemy enemy)
-  {
-      if (enemy != null)
-          if (_weapon != null)
-              if (IsAlive())
-                  _weapon.Hit(enemy);
-  }
-  ```
-
----
-
-**Do:**
-- Log exceptions with context and re-throw so failures are visible and diagnosable.
-  ```csharp
-  // ✅ Good — failure is loud and informative
-  try { LoadData(); }
-  catch (Exception e) { Debug.LogError($"Failed to load data: {e.Message}"); throw; }
-  ```
-
-**Avoid:**
-- Avoid catching exceptions just to swallow or re-throw them without adding information.
-  ```csharp
-  // ❌ Bad — failure is silently hidden
-  try { LoadData(); }
-  catch (Exception) { }
-  ```
-
 ----------------------------------------------------------------------------------
 
 ## Code Quality & Style

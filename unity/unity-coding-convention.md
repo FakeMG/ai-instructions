@@ -141,6 +141,22 @@
 
 ----------------------------------------------------------------------------------
 
+## Nullability & References
+
+**Avoid:**
+- Avoid checking null or resolving references in code for serialized field. Those fields need to be set in the editor
+  ```csharp
+  // ❌ Bad — null check is redundant if field is serialized by Unity and assigned in the inspector (both private and public)
+  [SerializeField] private Rigidbody _rigidbody;
+
+  private void Awake()
+  {
+      if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
+  }
+  ```
+
+----------------------------------------------------------------------------------
+
 ## Exception Handling
 
 **Do:**
@@ -267,8 +283,9 @@
       }
   }
   ```
+----------------------------------------------------------------------------------
 
-  ## Naming
+## Naming
 
 **Do:**
 - Suffix ScriptableObject names with `SO`.
