@@ -63,6 +63,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Always track the `AsyncOperationHandle` and release it when done to prevent leaks.
 - Avoid checking for null or resolving references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
 - Use C# events or EventBus instead of UnityEvent.
+- DO NOT modify Unity assets (prefabs, scenes, materials, ...) directly. Modifying assets directly is the last resort and should only be done when there is no alternative.
+- Use Unity MCP for all tasks that require touching the Unity Editor or Engine.
 
 ## Formatting
 - Group all Unity lifecycle methods (`Awake`, `Start`, `OnEnable`, `OnDisable`, etc.) in a region at the top of the class, immediately after fields/properties. No exceptions.
