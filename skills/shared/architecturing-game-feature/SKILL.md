@@ -57,7 +57,7 @@ For each class, show:
 
 **Abstraction rule:** Only propose an interface if there are at least two concrete implementations in this design. A single-implementation interface is banned — use the concrete class directly.
 
-Before presenting, audit the breakdown against AGENTS.md: flag any class that violates single responsibility, any duplicated logic across classes, any tight coupling that should be an event, and any premature abstraction.
+Before presenting, audit the breakdown against AGENTS.md: flag any class that violates single responsibility, any duplicated logic across classes, any tight coupling, and any premature abstraction. Then fix those issues before showing the breakdown to the user.
 
 Wait for explicit user approval before writing any code.
 If the user wants changes, revise the breakdown. Do not skip to code.
@@ -97,17 +97,6 @@ Generate one C# file per class.
 - Events: declared with correct delegate type, no invocation logic
 - Interfaces: full signatures, no bodies
 - Comments: every method gets a short inline `//` comment describing what it does — this is the skeleton's purpose and will be deleted in real code. Also add comments for non-obvious architectural decisions or critical constraints.
-
-### Enforce AGENTS.md conventions silently:
-- `_camelCase` private fields
-- `PascalCase` methods and classes
-- `SO` suffix on ScriptableObjects
-- Units in variable names (`delaySeconds`, `rangeMeters`, `healthPercent`)
-- Booleans as assertions (`isAlive`, `canAttack`)
-- Constants in `ALL_CAPS`
-- Lifecycle methods grouped in a `#region Unity Lifecycle` at the top
-- Event handlers named after the action they perform, not the event (`PunishPlayerWhenCaught`, not `OnPlayerCaught`)
-- Separate `Subscriber` MonoBehaviour for event wiring — never mix with business logic
 
 ### Example skeleton output:
 
