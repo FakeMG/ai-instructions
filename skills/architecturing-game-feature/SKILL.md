@@ -1,223 +1,179 @@
 ---
 name: architecturing-game-feature
-description: >
-  Design extensible, modular, decoupled Unity C# game feature architecture without implementing logic.
-  Use this skill whenever a user wants to architect a game system or feature in Unity — combat, inventory,
-  quests, AI, progression, UI, save systems, or any other game mechanic. Trigger when the user says things
-  like "design the architecture for", "how should I structure", "plan out the system for", "what's the best
-  way to organize", or "help me architect" any game feature. Also trigger when a user wants to review how
-  systems connect, extend, or depend on each other. Always use this skill before any Unity game system
-  implementation begins.
+description: Design code architecture for a Unity game feature. Use when the user asks to architect, design, or plan the structure of a Unity feature or system. Produces a class breakdown for approval, resolves design tradeoffs one at a time, then generates C# skeletons with empty/one-liner method bodies as the implementation guide.
 ---
 
-# Game Architecture Designer — Unity C#
-
-Produces a **scannable architecture document** for a Unity C# game feature. No method bodies. No implementation logic. The goal is to let the developer review structure, extension points, and system dependencies at a glance before writing a single line of real code.
+This skill produces a reviewable architecture plan for a Unity feature before any real logic is written.
+Build on top of AGENTS.md. Do not repeat its rules — enforce them silently.
 
 ---
 
-## Core Design Principles (apply to every output)
+## Step 1 — Understand
 
-| Principle | How to enforce it |
-|---|---|
-| **Extensibility** | New variants added by implementing interfaces or extending abstract bases — never by modifying existing classes |
-| **Modularity** | Each system owns one concern. No system bleeds into another's domain |
-| **Decoupling** | Systems communicate via events, interfaces, or a service locator — never via direct MonoBehaviour references |
-| **Single Source of Truth** | One authoritative owner per data domain. All readers go through that owner |
+Restate the feature goal in one sentence.
+Flag any ambiguity and ask before proceeding. Do not assume.
 
 ---
 
-## Output Format
+## Step 2 — Identify Tradeoffs
 
-Always produce the architecture doc in this exact order:
+Before producing any class breakdown, identify every meaningful design decision in the feature.
 
-### 1. System Map
-A plain-text dependency diagram showing every system involved and the direction of their dependencies.
+Resolve them **one at a time** using the `ask_user_input` tool. Mark your recommendation for each decision, but let the user choose.
+
+For each decision, present options in this format:
 
 ```
-[SystemA] ──uses──▶ [ISystemBContract]
-                          ▲
-                    [SystemB]
+**Decision: [what you're deciding]**
 
-[EventBus] ◀──fires── [SystemA]
-           ──delivers──▶ [SystemC]
+**Option A — [name]** (Recommended)
+- [tradeoff bullet]
+- [tradeoff bullet]
+
+**Option B — [name]**
+- [tradeoff bullet]
+- [tradeoff bullet]
 ```
 
-Arrow direction = dependency direction. Label every arrow with the relationship type: `uses`, `fires`, `delivers`, `owns`, `reads`.
+Do not proceed to Step 3 until all decisions are resolved.
 
-Flag the owner explicitly with a comment: `// OWNED BY: SystemName`
+### Common decisions to check (not exhaustive):
+- EventBus vs C# events vs direct injection for communication
+- ScriptableObject config vs runtime data class
+- MonoBehaviour vs POCO for logic ownership
+- Single generic system vs multiple specialized systems
+- Where state lives (who owns it, who reads it)
 
-### 2. Contracts (Interfaces)
+---
 
-Every cross-system boundary must be an interface. Show all interfaces the feature exposes or consumes.
+## Step 3 — Class Breakdown
+
+Group classes under folder headers. Do not print a full folder tree — just use the header as a separator.
+
+For each class, show:
+- **Class name** — one-sentence responsibility
+- **Depends on:** (list interfaces or classes it needs injected or referenced)
+- **Communicates via:** (events it raises or subscribes to, if any)
+
+**Abstraction rule:** Only propose an interface if there are at least two concrete implementations in this design. A single-implementation interface is banned — use the concrete class directly.
+
+Before presenting, audit the breakdown against AGENTS.md: flag any class that violates single responsibility, any duplicated logic across classes, any tight coupling that should be an event, and any premature abstraction.
+
+Wait for explicit user approval before writing any code.
+If the user wants changes, revise the breakdown. Do not skip to code.
+
+Example format:
+```
+── Systems/Health ──
+PlayerHealthSystem
+  Responsibility: Tracks and mutates player HP. Raises events on damage and death.
+  Depends on: HealthConfigSO
+  Communicates via: OnDamageTaken, OnPlayerDied
+
+── Config ──
+HealthConfigSO : ScriptableObject
+  Responsibility: Data container for max HP, regen rate, invincibility window.
+  Depends on: (none)
+  Communicates via: (none)
+
+── Subscribers ──
+PlayerHealthSubscriber : MonoBehaviour
+  Responsibility: Wires PlayerHealthSystem events to UI and audio responses.
+  Depends on: PlayerHealthSystem
+  Communicates via: (none — subscriber only)
+```
+
+---
+
+## Step 4 — Skeleton Code
+
+Generate one C# file per class.
+
+### Rules for skeleton output:
+- Use real C# syntax and Unity patterns
+- Full method signatures: correct return types, parameter names with types and units
+- Method bodies: empty `{ }` or a single `// TODO` line — no real logic
+- Properties: auto-properties only `{ get; private set; }`
+- Events: declared with correct delegate type, no invocation logic
+- Interfaces: full signatures, no bodies
+- Comments: every method gets a short inline `//` comment describing what it does — this is the skeleton's purpose and will be deleted in real code. Also add comments for non-obvious architectural decisions or critical constraints.
+
+### Enforce AGENTS.md conventions silently:
+- `_camelCase` private fields
+- `PascalCase` methods and classes
+- `SO` suffix on ScriptableObjects
+- Units in variable names (`delaySeconds`, `rangeMeters`, `healthPercent`)
+- Booleans as assertions (`isAlive`, `canAttack`)
+- Constants in `ALL_CAPS`
+- Lifecycle methods grouped in a `#region Unity Lifecycle` at the top
+- Event handlers named after the action they perform, not the event (`PunishPlayerWhenCaught`, not `OnPlayerCaught`)
+- Separate `Subscriber` MonoBehaviour for event wiring — never mix with business logic
+
+### Example skeleton output:
 
 ```csharp
-public interface ISystemName
+// ──────────────────────────────────────────
+// HealthConfigSO.cs
+// ──────────────────────────────────────────
+[CreateAssetMenu]
+public class HealthConfigSO : ScriptableObject
 {
-    ReturnType MethodName(ParamType param);
-    ReturnType MethodName2();
-    // signatures only — no bodies
+    // No interface — only one implementation exists
+    [SerializeField] private float _maxHealth;
+    [SerializeField] private float _regenRatePerSecond;
+    [SerializeField] private float _invincibilityDurationSeconds;
+
+    public float MaxHealth                    => _maxHealth;
+    public float RegenRatePerSecond           => _regenRatePerSecond;
+    public float InvincibilityDurationSeconds => _invincibilityDurationSeconds;
+}
+
+// ──────────────────────────────────────────
+// PlayerHealthSystem.cs  (POCO — no MonoBehaviour)
+// ──────────────────────────────────────────
+public class PlayerHealthSystem
+{
+    public event Action<float> OnDamageTaken;  // float = damageAmount
+    public event Action        OnPlayerDied;
+
+    public float CurrentHealth { get; private set; }
+    public bool  IsAlive       { get; private set; }
+
+    private readonly HealthConfigSO _config;
+
+    public PlayerHealthSystem(HealthConfigSO config) { }  // inject config
+
+    #region Public Methods
+    public void ApplyDamage(float damageAmount) { }  // reduce health, trigger invincibility window
+    public void ApplyHeal(float healAmount)     { }  // increase health, clamp to max
+    public void Reset()                         { }  // restore full health, clear invincibility state
+    #endregion
+
+    #region Private Methods
+    private bool IsInvincible()  => default;  // true if inside invincibility window
+    private void TriggerDeath()  { }          // set IsAlive false, raise OnPlayerDied
+    private void ClampHealth()   { }          // keep CurrentHealth within [0, MaxHealth]
+    #endregion
+}
+
+// ──────────────────────────────────────────
+// PlayerHealthSubscriber.cs  (MonoBehaviour — event wiring only)
+// ──────────────────────────────────────────
+public class PlayerHealthSubscriber : MonoBehaviour
+{
+    #region Unity Lifecycle
+    private void OnEnable()  { }  // subscribe to PlayerHealthSystem events
+    private void OnDisable() { }  // unsubscribe to prevent leaks
+    #endregion
+
+    private void UpdateHealthBarWhenDamaged(float damageAmount) { }  // forward damage amount to UI
+    private void PlayDeathSequenceWhenPlayerDied()              { }  // trigger animator + audio
 }
 ```
 
-Rules:
-- One interface per cross-system role
-- No Unity types (no `GameObject`, no `Transform`) in interface signatures — use plain C# or domain types
-- If a system needs to react to Unity lifecycle, keep that in the concrete class, not the interface
-
-### 3. Concrete Systems
-
-For each system, show:
-- What interface(s) it implements
-- What it depends on (injected via constructor or service locator)
-- Its public surface (method signatures only)
-- Its Unity entry point if it's a MonoBehaviour
-
-```csharp
-// Implements: ISystemName
-// Depends on: IotherSystem, IEventBus
-// Owns: FeatureData
-public class ConcreteSystem : MonoBehaviour, ISystemName
-{
-    // --- Public API ---
-    public ReturnType MethodName(ParamType param);
-    public ReturnType MethodName2();
-
-    // --- Unity Lifecycle (if MonoBehaviour) ---
-    private void Awake();
-    private void OnDestroy();
-
-    // --- Event Handlers ---
-    private void OnSomeEvent(EventType e);
-}
-```
-
-### 4. Events
-
-List every event the feature fires or listens to. Use a table.
-
-| Event | Fired By | Listened By | Payload |
-|---|---|---|---|
-| `OnFeatureTriggered` | SystemA | SystemB, SystemC | `FeatureEventData` |
-
-Define event payload structs:
-
-```csharp
-public struct FeatureEventData
-{
-    public int Id;
-    public float Value;
-}
-```
-
-### 5. Extension Points
-
-Explicitly call out where and how a developer adds new variants without modifying existing code (Open/Closed Principle).
-
-For each extension point:
-- What to implement/extend
-- Where to register it
-- What NOT to touch
-
-```
-EXTEND: Implement INewVariant
-REGISTER: In FeatureRegistry.Register<T>() or via ScriptableObject
-DO NOT TOUCH: CoreSystem, existing concrete implementations
-```
-
-### 6. SSOT Audit
- 
-Explicitly call out:
-- Any state stored in two places that must be kept in sync manually.
-- Any derived value that is recomputed in multiple systems instead of computed once and shared.
-- Any config value hardcoded in more than one place.
- 
-If none exist: **"No SSOT violations identified."**
- 
-Do not skip this section. Silence implies you checked.
-
-### 7. What This System Does NOT Own
-
-Explicit boundary list. Every out-of-scope concern should name which system owns it instead.
-
-```
-❌ Saves/loads data          → Owned by: SaveSystem
-❌ Plays audio               → Owned by: AudioSystem
-❌ Spawns VFX                → Owned by: VFXSystem
-```
-### 8. Decomposition
-
-Break the feature into layers or modules. Each module must have:
-  - A single, named responsibility
-  - Defined inputs and outputs (types/interfaces, not implementation)
-  - A clear owner (who calls it, who it calls)
-
-Rule: If you can't name the responsibility in 5 words, the module is too large.
-
-### 9. Trade-off Commentary
-
-For each major decision, briefly explain:
-  - Why this way (what principle it serves)
-  - What it costs (complexity, indirection, learning curve)
-  - When to revisit (what signal would change this decision)
-
-Do not omit this phase. Architecture without trade-off reasoning is decoration.
-
 ---
 
-## Decoupling Patterns — Pick the Right Tool
+## Step 5 — Extend
 
-Use this to decide how two systems communicate:
-
-| Scenario | Pattern |
-|---|---|
-| System A needs a result from System B synchronously | Interface injection (`ISystemB`) |
-| System A needs to notify others but doesn't care who listens | EventBus / C# event |
-| System needs a global service (e.g. AudioSystem) | Service Locator (`ServiceLocator.Get<IAudio>()`) |
-| Data shared across systems | ScriptableObject channel or centralized DataStore with one owner |
-| Unity scene objects need to communicate | UnityEvent on ScriptableObject, NOT `FindObjectOfType` |
-
-Never use:
-- `FindObjectOfType` — creates hidden coupling
-- `GetComponent` across unrelated systems — same problem
-- Singleton MonoBehaviours accessed directly — use a service locator interface instead
-
----
-
-## Worked Example Skeleton
-
-If the user's feature is ambiguous, produce a minimal skeleton using a **placeholder feature** to demonstrate the pattern, then ask for the real feature details.
-
-```
-Feature: [Name]
-Owner: [SystemName]
-Data: [DataClass]
-Contracts: [IInterface1, IInterface2]
-Events fired: [EventA, EventB]
-Extends via: [IExtensionPoint]
-Out of scope: [X → SystemY, Z → SystemW]
-```
-
----
-
-## Anti-Patterns to Call Out
-
-If the user's description implies any of these, flag them explicitly in the output:
-
-| Anti-Pattern | Problem | Fix |
-|---|---|---|
-| Manager class doing everything | God object, not modular | Split by single responsibility |
-| Systems referencing each other directly | Tight coupling | Introduce interface or event |
-| Data or logic duplicated across systems | Multiple sources of truth | Designate one owner, others read via interface |
-| Abstract base class for everything | Inflexible inheritance hierarchy | Prefer interface composition |
-| Interfaces created before there are two implementations | Over-engineering, unnecessary complexity | Wait for concrete use cases before creating interfaces |
-
----
-
-## Output Length Guidance
-
-- **Simple feature (1–2 systems):** Full doc, ~80–120 lines
-- **Medium feature (3–5 systems):** Full doc, ~150–250 lines
-- **Complex feature (6+ systems):** Produce the System Map and Contracts first. Ask the user which systems to expand before writing all concrete classes.
-
-Always prioritize scanability over completeness. The developer should be able to review the architecture in under 5 minutes.
+After skeleton is complete, suggest 1–2 natural next steps the user likely hasn't considered.
+Keep it to one sentence each. No implementation detail.
