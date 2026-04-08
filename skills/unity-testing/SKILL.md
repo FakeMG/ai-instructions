@@ -96,6 +96,7 @@ public IEnumerator Enemy_Dies_AwardsPoints()
 - No-op stubs silence dependencies you don't care about
 - Spy dummies record calls and values for assertions
 - Dummy classes live in the test assembly — no third-party mocking library required
+- If there is no interface to implement, create one — testability is a strong signal for missing abstractions
 
 ### Pattern 3 — EditMode (non-coroutine) Tests
 *Use plain `[Test]` for pure logic classes that don't need MonoBehaviour or frame waits. Reserve `[UnityTest]` / `IEnumerator` only when you need frame yields or MonoBehaviour lifecycle.*
