@@ -18,7 +18,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Before writing a new feature, explicitly identify the extension point: where will the next developer add to this without touching your code?
 
 ## Simplicity
-- DO NOT add abstraction until there are at least two concrete use cases for it. Premature abstraction is harder to remove than duplication.
+- DO NOT add abstraction until there are at least two concrete use cases for it. BAN abstraction that only has one implementation.
 - Encapsulate implementation details and expose only necessary functionality through public interfaces.
 - DO NOT explain *what* code does. Use comments only to explain *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
 - Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
@@ -42,6 +42,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Others 
 - Avoid silent early returns. Log a warning or error if a method is called in an invalid state, rather than just returning null or doing nothing.
 - Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
+- Don't write tests unless user explicitly asks for them.
 
 ## Formatting
 - Follow Microsoft C# conventions: PascalCase for classes and methods, camelCase for variables and parameters.
@@ -52,7 +53,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Write all constants in ALL_CAPS with underscores (e.g., `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT_SECONDS`).
 - Use consistent terminology throughout the codebase — never mix synonyms for the same concept (e.g., don't use both `enemy` and `foe`).
 - Name event handlers after the action they perform, not the event that triggered them. `PunishPlayerWhenCaught` is correct. `OnPlayerCaught` is wrong.
-- Use regions to separate public methods from private methods. Order methods by call order — caller before callee — so the file reads top-to-bottom like a story.
+- Use regions to separate public methods from private methods. Order methods by call order — caller before callee — so the file reads top-to-bottom like a story. Public region first, then private. Within each region, order methods by call hierarchy.
 
 ---
 
@@ -65,6 +66,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Use C# events or EventBus instead of UnityEvent.
 - DO NOT modify Unity assets (prefabs, scenes, materials, ...) directly. Modifying assets directly is the last resort and should only be done when there is no alternative.
 - Use Unity MCP for all tasks that require touching the Unity Editor or Engine.
+- Separate event subscription logic from core business logic into a dedicated `Subscriber` MonoBehaviour.
 
 ## Formatting
 - Group all Unity lifecycle methods (`Awake`, `Start`, `OnEnable`, `OnDisable`, etc.) in a region at the top of the class, immediately after fields/properties. No exceptions.
