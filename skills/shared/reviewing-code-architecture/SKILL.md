@@ -83,6 +83,8 @@ Before critiquing, understand:
 - What language/framework conventions apply?
 - Is this a prototype or production code? (affects severity of findings)
 
+Run the *Explore* subagent to gather relevant information about the system, its context, and any existing systems it may interact with.
+
 If the user hasn't said, ask exactly one clarifying question. Don't ask more than one at a time.
 
 ### Step 2: Read the code fully before commenting

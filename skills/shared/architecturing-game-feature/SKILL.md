@@ -11,6 +11,7 @@ Build on top of AGENTS.md. Do not repeat its rules — enforce them silently.
 ## Step 1 — Understand
 
 Restate the feature goal in one sentence.
+Run the *Explore* subagent to gather relevant information about the feature, its context, and any existing systems it may interact with. When the task spans multiple independent areas (e.g., frontend + backend, different features, separate repos), launch **2-3 *Explore* subagents in parallel** — one per area — to speed up discovery.
 Flag any ambiguity and ask before proceeding. Do not assume.
 
 ---
@@ -29,10 +30,12 @@ For each decision, present options in this format:
 **Option A — [name]** (Recommended)
 - [tradeoff bullet]
 - [tradeoff bullet]
-
+`[1–3 line code example showing the shape]`
+ 
 **Option B — [name]**
 - [tradeoff bullet]
 - [tradeoff bullet]
+`[1–3 line code example showing the shape]`
 
 **Options C, D, E, ...** (as needed)
 
@@ -41,7 +44,22 @@ For each decision, present options in this format:
 ```
 
 Do not proceed to Step 3 until all decisions are resolved.
-
+ 
+### Example of a resolved tradeoff:
+```
+**Decision: How should PlayerHealthSystem notify other systems of damage?**
+ 
+**Option A — EventBus** (Recommended)
+- Zero coupling — subscriber needs no reference to the sender
+- Harder to trace; event origin is implicit
+`EventBus<PlayerDamagedEvent>.Raise(new PlayerDamagedEvent(damageAmount));`
+ 
+**Option B — C# event on the class**
+- Explicit ownership — caller must hold a reference to subscribe
+- Easier to trace and debug
+`public event Action<float> OnDamageTaken;`
+```
+ 
 ### Common decisions to check (not exhaustive):
 - EventBus vs C# events vs direct injection for communication
 - ScriptableObject config vs runtime data class
