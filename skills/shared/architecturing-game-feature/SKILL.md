@@ -33,6 +33,11 @@ For each decision, present options in this format:
 **Option B — [name]**
 - [tradeoff bullet]
 - [tradeoff bullet]
+
+**Options C, D, E, ...** (as needed)
+
+**Option Custom** (User-defined)
+
 ```
 
 Do not proceed to Step 3 until all decisions are resolved.
