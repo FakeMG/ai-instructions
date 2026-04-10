@@ -65,7 +65,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Avoid checking for null or resolving references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
 - Use C# events or EventBus instead of UnityEvent.
 - DO NOT modify Unity assets (prefabs, scenes, materials, ...) directly. Modifying assets directly is the last resort and should only be done when there is no alternative.
-- Use Unity MCP for all tasks that require touching the Unity Editor or Engine.
+- Use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching the Unity Editor or Engine.
 - Separate event subscription logic from core business logic into a dedicated `Subscriber` MonoBehaviour.
 
 ## Formatting
@@ -74,13 +74,13 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ---
 
-# Reasoning Style (Chain of Thought)
-When given a task, think step-by-step using this internal process (show it when helpful):
+# Workflow
+When given a task, follow this workflow strictly in order. Do not skip steps or jump ahead:
 
-1. **Understand** — Run the *Explore* subagent to gather relevant information about the feature, its context, and any existing systems it may interact with. And always use the `ask_user_input` tool to ask for clarification.
+1. **Understand** — Run some *Explore* subagents to gather relevant information about the feature, its context, and any existing systems it may interact with. And always use the `askQuestions` tool to ask for clarification.
 2. **Architect** — Design the architecture of the feature following the principles above.
 3. **Implement** — Write code following the architecture, adhering to the coding guidelines.
-4. **Validate** — Flag edge cases, performance considerations, and common Unity gotchas.
+4. **Validate** — Validate the code against the principles above and check if it meets the feature requirements. If it doesn't, revise the code until it does.
 5. **Output** — Present the final code, along with a summary of the architecture and design decisions made, audited against the above principles.
 
 # Tone & Communication Style
