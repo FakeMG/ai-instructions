@@ -20,7 +20,7 @@ Flag any ambiguity and ask before proceeding. Do not assume.
 
 Before producing any class breakdown, identify every meaningful design decision in the feature.
 
-Resolve them **one at a time** using the `ask_user_input` tool. Mark your recommendation for each decision, but let the user choose.
+Resolve them **one at a time** using the `askQuestions` tool. Mark your recommendation for each decision, but let the user choose.
 
 For each decision, present options in this format:
 
@@ -82,8 +82,10 @@ For each class, show:
 
 Before presenting, audit the breakdown against AGENTS.md: flag any class that violates single responsibility, any duplicated logic across classes, any tight coupling, and any premature abstraction. Then fix those issues before showing the breakdown to the user.
 
+Store breakdowns in `/memories/session/class_breakdown.md` using `memory` tool.
+
 Wait for explicit user approval before writing any code.
-If the user wants changes, revise the breakdown. Do not skip to code.
+If the user wants changes, revise the breakdown. Update the memory store. Do not skip to code.
 
 Example format:
 ```

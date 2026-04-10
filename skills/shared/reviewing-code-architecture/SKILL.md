@@ -99,6 +99,8 @@ Not everything is equally bad. Sort findings into:
 
 Only escalate to 🔴 if it genuinely warrants it. Don't cry wolf.
 
+Store findings in `/memories/session/review_findings.md` using `memory` tool.
+
 ### Step 4: Structure the output
 
 Use this format:
