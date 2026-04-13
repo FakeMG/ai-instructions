@@ -23,7 +23,7 @@ Review the code across these four dimensions, in this priority order:
 ### 1. Single Source of Truth (SSOT)
 The most critical dimension. Violations here multiply bugs.
 
-Look for:
+Look for (not exhaustive):
 - **Duplicated state**: the same data stored/derived in multiple places
 - **Derived values recomputed**: values that could be derived but are instead cached manually and kept "in sync"
 - **Mirrored config**: constants or config values copied across files instead of imported from one place
@@ -37,7 +37,7 @@ When found, name the specific locations and explain exactly what state is duplic
 ### 2. Decoupling
 Tight coupling creates change-resistance and untestable code.
 
-Look for:
+Look for (not exhaustive):
 - **Direct class/module instantiation** inside business logic instead of dependency injection
 - **Cross-layer imports**: e.g., UI importing DB logic, or domain layer importing framework code
 - **Implicit dependencies**: functions that reach into global state or singletons without declaring them
@@ -51,8 +51,8 @@ When found, identify the specific import/call chains causing coupling.
 ### 3. Modularity
 A modular system lets you change or replace one piece without touching others.
 
-Look for:
-- **God objects/modules**: classes or files that do too many unrelated things
+Look for (not exhaustive):
+- **God objects/modules**: classes or files that do too many unrelated things. Use the `lcom4` skill to calculate the LCOM4 metric if you see a class with >300 lines.
 - **Boundary violations**: logic that leaks across module boundaries (e.g., business rules in controllers, DB queries in views)
 - **Unclear ownership**: when it's ambiguous which module "owns" a concept
 - **Missing abstraction layers**: direct use of low-level primitives where a domain abstraction should exist
@@ -65,7 +65,7 @@ Call out both under-abstraction AND over-engineering. Neither is good.
 ### 4. Extensibility
 Good architecture lets you add features without rewriting existing code.
 
-Look for:
+Look for (not exhaustive):
 - **Switch/if-else chains on type**: should usually be polymorphism or a strategy/registry pattern
 - **Hard-coded behavior that will obviously vary**: feature flags, rule sets, handler lists that are baked in
 - **Closed classes**: classes that would need modification (not extension) to support new behavior

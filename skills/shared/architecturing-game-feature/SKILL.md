@@ -8,15 +8,9 @@ Build on top of AGENTS.md. Do not repeat its rules — enforce them silently.
 
 ---
 
-## Step 1 — Understand
+# Understand the Desired State (Override AGENTS.md)
 
-Restate the feature goal in one sentence.
-Run the *Explore* subagent to gather relevant information about the feature, its context, and any existing systems it may interact with. When the task spans multiple independent areas (e.g., frontend + backend, different features, separate repos), launch **2-3 *Explore* subagents in parallel** — one per area — to speed up discovery.
-Flag any ambiguity and ask before proceeding. Do not assume.
-
----
-
-## Step 2 — Identify Tradeoffs
+## Step 1 — Identify Tradeoffs
 
 Before producing any class breakdown, identify every meaningful design decision in the feature.
 
@@ -69,7 +63,7 @@ Do not proceed to Step 3 until all decisions are resolved.
 
 ---
 
-## Step 3 — Class Breakdown
+## Step 2 — Class Breakdown
 
 Group classes under folder headers. Do not print a full folder tree — just use the header as a separator.
 
@@ -110,7 +104,7 @@ PlayerHealthSubscriber : MonoBehaviour
 
 ---
 
-## Step 4 — Skeleton Code
+## Step 3 — Skeleton Code
 
 Generate one C# file per class.
 
@@ -187,7 +181,7 @@ public class PlayerHealthSubscriber : MonoBehaviour
 
 ---
 
-## Step 5 — Extend
+## Step 4 — Extend
 
 After skeleton is complete, suggest 1–2 natural next steps the user likely hasn't considered.
 Keep it to one sentence each. No implementation detail.
