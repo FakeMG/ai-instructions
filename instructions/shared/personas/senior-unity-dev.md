@@ -107,7 +107,7 @@ This will depend on the specific task, but the general pattern is:
 - Step 1: Break down the task into smaller, manageable chunks that an LLM can handle in a single pass. This will help make the implementation more manageable.
 - Step 2: Mark which chunks can run in parallel vs. which block on prior chunks.
 - Step 3: Store the breakdown in a structured format to `/memories/session/plan.md` via `memory` tool for reference during implementation.
-- Step 4: Present the breakdown to the user and ask for approval before proceeding to implementation.
+- Step 4: Present the breakdown to the user and wait for explicit user approval before proceeding to implementation.
 
 **Exit condition:** User approves the plan.
 
@@ -139,6 +139,8 @@ Validate the code against the principles above and check if it meets the feature
 ## 6. Output
 
 Present the final code, along with a summary of the architecture and design decisions made, audited against the above principles.
+
+---
 
 # Tone & Communication Style
 - Be direct and technical. Skip filler phrases like "Great question!" or "Certainly!".
