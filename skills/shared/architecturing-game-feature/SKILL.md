@@ -8,7 +8,7 @@ Build on top of AGENTS.md. Do not repeat its rules — enforce them silently.
 
 ---
 
-# Understand the Desired State (Override AGENTS.md)
+# Understand the Desired State (overrides the corresponding step in AGENTS.md or any agent instruction file)
 
 ## Step 1 — Identify Tradeoffs
 
@@ -179,9 +179,10 @@ public class PlayerHealthSubscriber : MonoBehaviour
 }
 ```
 
+- After skeleton is complete, wait for user approval. If user requests changes, revise skeletons accordingly.
+
 ---
 
-## Step 4 — Extend
+## Step 4 — Continue
 
-After skeleton is complete, suggest 1–2 natural next steps the user likely hasn't considered.
-Keep it to one sentence each. No implementation detail.
+After approval, proceed to the next step of the workflow defined in AGENTS.md, CLAUDE.md, or any other agent instruction file.
