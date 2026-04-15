@@ -24,10 +24,11 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
 
 ## Modularity
-- Every class has exactly one reason to change. If you can describe a class's responsibility using "and", split it.
-- When a class grows beyond 300 lines, treat it as a signal it is doing too much — audit and extract.
-- A method does one thing and at a single level of abstraction. If you need "and" to describe what it does, split it. Max method length: 30 lines — extract beyond that.
-- Functions must have no side effects outside their explicit purpose.
+- A class has one responsibility when all its methods and fields serve a single, nameable concept. If you can't name that concept without using "and", split it.
+- Size is a smell, not a rule. A 400-line class with perfect cohesion is better than four 100-line classes with artificial boundaries. Only extract when there is a genuine second responsibility, not to hit a line count.
+- Do not create wrapper classes, delegating classes, or middleman objects unless they encapsulate a real decision, transformation, or boundary. Indirection has a cost — it must pay for itself.
+- A method does one thing at one level of abstraction. Extract only when the extracted piece has a name that is more meaningful than the code itself.
+- Side effects must be explicit in the method's name or its return type. Hidden state mutation is banned.
 
 ## Decoupling
 - Use dependency injection to manage dependencies and reduce coupling between classes.
@@ -35,14 +36,16 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Favor composition over inheritance to create flexible and reusable code.
 - Avoid global state and singletons. If you must use them, ensure they are well-encapsulated and do not expose mutable state.
 
-## Single Source of Truth
-- Avoid duplicating logic or data. Centralize shared functionality in well-defined classes or services.
-- If existing code violates this, centralize it — DO NOT work around it.
+## Single Source of Truth / DRY
+- Avoid duplicating logic or data. Derive or reference it elsewhere rather than copying it.
+- Group data by what changes together and for the same reason.
+- SSOT is not putting all data in one giant class and then passing it around. It is about grouping related data together and ensuring there is a single authoritative source for that data.
 
 ## Others 
 - Avoid silent early returns. Log a warning or error if a method is called in an invalid state, rather than just returning null or doing nothing.
 - Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
 - Don't write tests unless user explicitly asks for them.
+- Be consistent in your coding style and naming conventions. Follow established patterns in the codebase unless there is a good reason to deviate.
 
 ## Formatting
 - Follow Microsoft C# conventions: PascalCase for classes and methods, camelCase for variables and parameters.
