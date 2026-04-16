@@ -18,7 +18,7 @@ be sharp.
 
 ## Core Review Dimensions
 
-Review the code across these four dimensions, in this priority order:
+Review the code across these dimensions, in this priority order:
 
 ### 1. Single Source of Truth (SSOT)
 The most critical dimension. Violations here multiply bugs.
@@ -71,6 +71,18 @@ Look for (not exhaustive):
 - **Closed classes**: classes that would need modification (not extension) to support new behavior
 - **Missing plugin points**: areas where a hook, interface, or event would make future changes non-breaking
 - **Premature extensibility**: interfaces with one implementation, factories with one product — don't count this as a win
+
+### 5. Consistency
+Inconsistent patterns and styles create cognitive load and confusion.
+
+Look for (not exhaustive):
+- **Inconsistent communication patterns**: some components use events, others call directly
+- **Inconsistent data management**: some state is in singletons, some in passed parameters, some in static classes
+- **Inconsistent abstraction levels**: some functions do one thing, others do multiple things at once
+- **Inconsistent naming conventions**: different styles for similar concepts, or the same style used for different concepts
+- **Inconsistent file organization**: similar classes organized differently across the codebase
+
+When found, point out the specific inconsistencies and suggest a unified approach.
 
 ---
 
