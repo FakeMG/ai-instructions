@@ -107,6 +107,8 @@ PlayerHealthSubscriber : MonoBehaviour
 ## Step 3 — Skeleton Code
 
 Generate one C# file per class.
+Destination folder: `Assets/ArchitectureSkeletons/[FeatureName]/`.
+Keep the skeleton as reference for the final implementation.
 
 ### Rules for skeleton output:
 - Use real C# syntax and Unity patterns
