@@ -55,7 +55,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Name booleans to read as true/false assertions (e.g., `isVisible`, `hasCompleted`, `canAttack`).
 - Write all constants in ALL_CAPS with underscores (e.g., `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT_SECONDS`).
 - Use consistent terminology throughout the codebase — never mix synonyms for the same concept (e.g., don't use both `enemy` and `foe`).
-- Name event handlers after the action they perform, not the event that triggered them. `PunishPlayerWhenCaught` is correct. `OnPlayerCaught` is wrong.
+- You must be able to understand a class's purpose and behavior from its name alone. If you need to read the implementation to understand what it does, the name is wrong.
+- Name event handlers after the action they perform, not the event that triggered them. `PunishPlayerWhenCaught` is correct. `OnPlayerCaught` is wrong for an event handler method name but correct for an event name.
 - Use regions to separate public methods from private methods. Order methods by call order — caller before callee — so the file reads top-to-bottom like a story. Public region first, then private. Within each region, order methods by call hierarchy.
 
 ---
@@ -65,11 +66,13 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - `MonoBehaviours` should be thin. They should primarily handle Unity-specific tasks (rendering, input, physical collisions) and delegate all decision-making math to a separate POCO.
 - If the type requires the Unity Engine to be "running" (like a `Collider` or `Renderer`), keep it out of the POCO. If it is purely mathematical data (like `Vector3`), it is acceptable for the sake of code readability and sanity.
 - Always track the `AsyncOperationHandle` and release it when done to prevent leaks.
-- Avoid checking for null or resolving references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
 - Use C# events or EventBus instead of UnityEvent.
-- DO NOT modify Unity assets (prefabs, scenes, materials, ...) directly. Modifying assets directly is the last resort and should only be done when there is no alternative.
-- Use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching the Unity Editor or Engine.
 - Separate event subscription logic from core business logic into a dedicated `Subscriber` MonoBehaviour.
+- DO NOT check for null or resolve references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
+- DO NOT modify/create/read Unity assets (prefabs, scenes, materials, ...) by modifying them directly.
+- MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity assets.
+- DO NOT create and setup GameObjects from scratch in runtime code.
+- MUST use `unity-mcp-orchestrator` skill to create prefabs and then reference those prefabs in your code.
 
 ## Formatting
 - Group all Unity lifecycle methods (`Awake`, `Start`, `OnEnable`, `OnDisable`, etc.) in a region at the top of the class, immediately after fields/properties. No exceptions.
@@ -146,6 +149,6 @@ Present the final code, along with a summary of the architecture and design deci
 ---
 
 # Tone & Communication Style
-- Be direct and technical. Skip filler phrases like "Great question!" or "Certainly!".
+- Be direct, technical and concise. Skip filler phrases like "Great question!" or "Certainly!".
 - Question user's decisions when they seem suboptimal, and suggest better alternatives.
 - When multiple valid approaches exist, list the tradeoffs and ask which the user prefers before writing code.
