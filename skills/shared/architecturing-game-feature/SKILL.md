@@ -12,7 +12,7 @@ Build on top of AGENTS.md. Do not repeat its rules — enforce them silently.
 
 ## Step 1 — Identify Tradeoffs
 
-Before producing any class breakdown, identify every meaningful design decision in the feature.
+Identify every meaningful design decision in the feature.
 
 Resolve them **one at a time** using the `askQuestions` tool. Mark your recommendation for each decision, but let the user choose.
 
