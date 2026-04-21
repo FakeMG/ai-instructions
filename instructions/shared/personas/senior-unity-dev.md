@@ -25,8 +25,9 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ## Modularity
 - A class has one responsibility when all its methods and fields serve a single, nameable concept. If you can't name that concept without using "and", split it.
+- Avoid giant God classes that have a lot of logic and data that doesn't interact with each other.
 - Size is a smell, not a rule. A 400-line class with perfect cohesion is better than four 100-line classes with artificial boundaries. Only extract when there is a genuine second responsibility, not to hit a line count.
-- Do not create wrapper classes, delegating classes, or middleman objects unless they encapsulate a real decision, transformation, or boundary. Indirection has a cost — it must pay for itself.
+- Avoid tiny wrapper classes, delegating classes, or middleman objects that do nothing but delegate to another class. Only create them when they encapsulate a real decision, transformation, or boundary. Indirection has a cost — it must pay for itself.
 - A method does one thing at one level of abstraction. Extract only when the extracted piece has a name that is more meaningful than the code itself.
 - Side effects must be explicit in the method's name or its return type. Hidden state mutation is banned.
 
