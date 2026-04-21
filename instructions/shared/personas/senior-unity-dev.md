@@ -71,8 +71,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - DO NOT check for null or resolve references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
 - DO NOT modify/create/read Unity assets (prefabs, scenes, materials, ...) by modifying them directly.
 - MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity assets.
-- DO NOT create and setup GameObjects from scratch in runtime code.
-- MUST use `unity-mcp-orchestrator` skill to create prefabs and then reference those prefabs in your code.
+- DO NOT create and setup runtime GameObjects from scratch in code. With the exception of editor scripts.
+- All GameObjects MUST be created as prefabs and then instantiated. This ensures the prefab's components and serialized fields are properly set up.
 
 ## Formatting
 - Group all Unity lifecycle methods (`Awake`, `Start`, `OnEnable`, `OnDisable`, etc.) in a region at the top of the class, immediately after fields/properties. No exceptions.

@@ -1,20 +1,26 @@
 ---
 name: unity-playmode-testing
 description: >
-  Activate this skill when you need to do anything related to PlayMode tests in a Unity project.
+  Activate this skill when you need to write or refactor tests related to PlayMode tests in a Unity project.
 ---
+
+This skill produces a reviewable testing plan for Unity PlayMode tests before any real test logic is written.
+Build on top of Guidelines in `unity-editmode-testing`.
 
 # Understand the Desired State (overrides the corresponding step in AGENTS.md or any agent instruction file)
 
-## Identify the behaviors to test and the components involved
+## PlayMode Testing Workflow
 
-1. Identify which behaviors should be tested.
-2. Identify what are the main components involved in each behavior.
-3. Which prefabs hold those components? Use production prefabs and not test-specific ones.
-4. What are other components on those prefabs that might need injected dependencies?
-5. What dependencies do those components have that need to be mocked or injected?
-6. Which dependencies need abstracting behind an interface to be mockable?
-7. What assembly definitions do those classes live in, and do the test assemblies have access to them?
+When given a task about writing PlayMode tests, follow this workflow strictly in order. Do not skip steps or jump ahead:
+
+- Step 1: Identify which behaviors should be tested.
+- Step 2: What assets are needed to test the behavior?
+- Step 3: Identify what are the main components involved in each behavior.
+- Step 4: Identify which prefabs, game objects hold those components?
+- Step 5: Search for what are other components on those prefabs that might need injected dependencies?
+- Step 6: What dependencies do those components have that need to be mocked or injected?
+- Step 7: Which dependencies need abstracting behind an interface to be mockable?
+- Step 8: What assembly definitions do those classes live in, and do the test assemblies have access to them?
 
 Using the `askQuestions` tool to ask for confirmation.
 
@@ -23,22 +29,25 @@ Present the findings in this format:
 # PlayMode tests:
 1. [Behavior1]
 - Reason for testing (complex logic, edge cases, known bugs)
-- Main Monobehavior components involved in the behavior:
-    ComponentName1
-    ComponentName2
-- Prefabs holding the components:
-    PrefabName1 (path/to/prefab1)
-    PrefabName2 (needs extracting from scene or creating via UnityMCP)
-- Other components on those prefabs that might need injected dependencies:
-    ComponentName3 (dependency: IAudioService)
-    ComponentName4 (dependency: IScoreSystem)
-- Dependencies to mock, inject
-    IAudioService
-    IScoreSystem
-    AnimationHandler (needs interface extraction)
-- Assembly definitions to add to test assembly for access:
-    AssemblyName1
-    AssemblyName2
+# Assets needed (prefabs, scenes, ScriptableObjects):
+- AssetName1 (path/to/asset1)
+- AssetName2 (path/to/asset2)
+# Main Monobehavior components involved in the behavior:
+- ComponentName1
+- ComponentName2
+# Prefabs holding the components:
+- PrefabName1 (path/to/prefab1)
+- PrefabName2 (needs extracting from scene or creating via UnityMCP)
+# Other components on those prefabs that might need injected dependencies:
+- ComponentName3 (dependency: IAudioService)
+- ComponentName4 (dependency: IScoreSystem)
+# Dependencies to mock, inject:
+- IAudioService
+- IScoreSystem
+- AnimationHandler (needs interface extraction)
+# Assembly definitions to add to test assembly for access:
+- AssemblyName1
+- AssemblyName2
 
 2. [Behavior2]
 3. [Behavior3]
@@ -46,10 +55,16 @@ Present the findings in this format:
 More behaviors as needed...
 ```
 
-Do not proceed to implementation until the user confirms the list of behaviors to test.
+DO NOT proceed to implementation until the user confirms your findings.
 
 Create the prefabs if they don't exist yet using the `unity-mcp-orchestrator` skill, and mark them as Addressables.
 Assign them to a `TestAssetConfig` ScriptableObject in a `Resources` folder for loading in tests.
+
+---
+
+## Guidelines for writing PlayMode tests
+
+- DO NOT create test-specific assets (prefabs, materials, ScriptableObjects, etc.). You MUST use production assets for testing. If the necessary assets don't exist yet, create them using UnityMCP and add them to the production asset folders.
 
 ---
 
@@ -121,14 +136,12 @@ public class TestAssetConfig : ScriptableObject {
 2. Setup: Save this asset at `Assets/Tests/Resources/TestConfig.asset`. Drag real prefabs into the inspector fields.
 3. Execution: Use `Resources.Load<TestAssetConfig>("TestConfig")` to find the config, then `LoadAssetAsync()` to load the specific prefab.
 
-
 All prefab-based tests are **PlayMode** tests. Load via Addressables before building the container.
 
 **Key points:**
 - The Addressable address is the asset path by default unless a custom address has been set
 - Release the handle at the end of the test or in `[TearDown]` to avoid memory leaks
 - If the prefab isn't marked as an Addressable yet, use UnityMCP to mark it — if that isn't possible, ask the user to do it manually (`Window > Asset Management > Addressables > Groups`, drag the prefab in)
-
 
 ---
 

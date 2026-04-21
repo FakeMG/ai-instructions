@@ -1,13 +1,14 @@
 ---
 name: unity-editmode-testing
 description: >
-  Best practices and patterns for writing Unity tests using VContainer for dependency injection and hand-written dummy/stub classes for faking dependencies. ALWAYS use this skill when the user is writing any test in a Unity project — [Test], [UnityTest], PlayMode, EditMode, or any C# test class in a Unity codebase. Also trigger for MonoBehaviour testing, VContainer test containers, dummy dependencies, prefab instantiation in tests, or isolating systems under test.
-  If the user is working in a Unity project and mentions tests at all, use this skill.
+  Best practices and patterns for writing Unity tests using VContainer for dependency injection and NSubstitute for mocking. ALWAYS use this skill when the user is writing any test in a Unity project — [Test], [UnityTest], PlayMode, EditMode, or any C# test class in a Unity codebase. Also trigger for MonoBehaviour testing, VContainer test containers, prefab instantiation in tests. If the user is working in a Unity project and mentions tests at all, use this skill.
 ---
 
 # Understand the Desired State (overrides the corresponding step in AGENTS.md or any agent instruction file)
 
 ## EditMode Testing Workflow
+
+When given a task about writing EditMode tests, follow this workflow strictly in order. Do not skip steps or jump ahead:
 
 ### Step 1 — Identify what needs testing
 
@@ -39,7 +40,7 @@ Present the findings in this format:
 More classes as needed...
 ```
 
-Do not proceed to Step 2 until the user confirms the list of tests to write.
+DO NOT proceed to Step 2 until the user confirms your findings.
 
 ### Step 2 — Write skeleton test classes
 
@@ -73,6 +74,7 @@ public class PlayerService
 public void HasEnoughHealthPotions_ReturnsTrue_WhenRepoHasItems()
 {
     // 1. Setup Mock using NSubstitute
+    // ── Arrange ──────────────────────────────────────────
     var itemId = "health_potion";
     var mockRepo = Substitute.For<IInventoryRepository>();
     mockRepo.GetItemCount(itemId).Returns(5);
@@ -91,10 +93,10 @@ public void HasEnoughHealthPotions_ReturnsTrue_WhenRepoHasItems()
     {
         var service = container.Resolve<PlayerService>();
 
-        // 4. Act
+        // ── Act ─────────────────────────────────────────────
         var result = service.HasEnoughHealthPotions();
 
-        // 5. Assert
+        // ── Assert ──────────────────────────────────────────
         Assert.IsTrue(result);
         mockRepo.Received(1).GetItemCount(itemId);
     }
