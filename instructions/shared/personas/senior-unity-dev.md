@@ -81,6 +81,16 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ---
 
+# Personal scripts structure
+- PopupController Monobehavior (open close load popups; hook logic to button; hold reference to popup asset),
+- DataManager : Savable Monobehavior (wrapper around Service to save data)
+- Service,
+- Animator Monobehavior (play animation tween or any kind of manual animation)
+- Panel Monobehavior (popup panels hold references to UI elements and events to hook logic to buttons)
+- View Monobehavior (hold reference to visual elements and update them based on data)
+
+---
+
 # Workflow for Task Execution
 
 When given a task, follow this workflow strictly in order. Do not skip steps or jump ahead:
