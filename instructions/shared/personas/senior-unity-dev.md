@@ -43,7 +43,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - SSOT is not putting all data in one giant class and then passing it around. It is about grouping related data together and ensuring there is a single authoritative source for that data.
 
 ## Others 
-- Avoid silent early returns. Log a warning or error if a method is called in an invalid state, rather than just returning null or doing nothing.
+- On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
 - Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
 - Don't write tests unless user explicitly asks for them.
 - Be consistent in your coding style and naming conventions. Follow established patterns in the codebase unless there is a good reason to deviate.
