@@ -14,7 +14,7 @@ A protocol for any AI agent to deeply understand what a user has in mind through
 
 People often have a clear picture in their head but struggle to express it fully on the first try. Understanding is a **collaborative process**: ask targeted questions, receive answers, synthesize and reflect back, repeat — until both sides agree the picture is clear.
 
-The goal is to produce a shared **Intent Document** — a structured description of what the user means — that the agent can then act on confidently.
+The goal is to produce a shared **Intent Document** — a structured description of what the user means — that the agent can then act on confidently. The document need to be so detailed that even if the user walked away, another person could pick it up and understand the intent without needing to ask more questions.
 
 ---
 
@@ -22,10 +22,11 @@ The goal is to produce a shared **Intent Document** — a structured description
 
 All clarification work converges toward a shared **Intent Document** (see Output section for the full template). The structure has two parts:
 
-- **Definition** — what the thing *looks like*: its properties, boundaries, and components
+- **Definition, Visual** — what the thing *looks like*: its properties, boundaries, and components
+- **Boundaries & Constraints** — what the thing is not: the limits, "no-go" zones, and hard requirements.
 - **Execution** — what *happens*: a step-by-step walkthrough of each distinct interaction or scenario
 
-Every question asked during clarification is ultimately trying to fill in one of these two parts.
+Every question asked during clarification is ultimately trying to fill in one of these three parts.
 
 ---
 
@@ -33,30 +34,30 @@ Every question asked during clarification is ultimately trying to fill in one of
 
 ### Phase 1 — First Pass
 
-Ask **3–5 targeted questions** covering:
+Ask **targeted questions** for each part of the document covering:
 1. **What** — What is this thing? What does it look like / what are its parts?
 2. **Why** — What's the goal or purpose?
 3. **How** — How does it work / what happens step by step?
 4. **Who / When / Where** — Context that shapes the answer
 5. **Edge cases** — What it is *not*, or what happens when things go wrong?
 
-Present as a numbered list. Keep each question short and concrete.
+Separate the questions by part of the Intent Document. Present as a numbered list. Keep each question short and concrete.
 
 ### Phase 2 — Synthesize and Reflect
 
-After receiving answers, produce a **draft Intent Document** using the format above. Be explicit: "Here's what I understand — is this right?"
+After receiving answers, produce a **draft Intent Document** using the format below. Be explicit: "Here's what I understand — is this right?"
 
 - Fill in what is known confidently
-- Mark uncertain parts with `[?]`
+- Mark uncertain parts with `[?]`  or "I'm not sure about..."
 - Propose a best guess for gaps rather than leaving them blank
 
 ### Phase 3 — Test Round
 
 Generate **2–3 test statements** — short true/false or yes/no claims about the intent — and ask the user to confirm or correct. Example:
 
-> - "This applies to mobile users too." ✓ or ✗?
-> - "Step 2 always follows step 1." ✓ or ✗?
-> - "Users never need to authenticate for this." ✓ or ✗?
+> 1. "This applies to mobile users too." ✓ or ✗?
+> 2. "Step 2 always follows step 1." ✓ or ✗?
+> 3. "Users never need to authenticate for this." ✓ or ✗?
 
 This surfaces hidden assumptions quickly.
 
@@ -64,7 +65,10 @@ This surfaces hidden assumptions quickly.
 
 If the user corrects or adds anything, revise the Intent Document and repeat Phase 3 for only the changed parts. Keep iterating until the user confirms it's accurate.
 
-**Stop when:** The user confirms the document is correct, OR after 4 rounds (then proceed with best understanding and note remaining uncertainties).
+Then repeat the process again and again starting with Phase 1 with any remaining uncertainties or edge cases until the user feels it's fully captured.
+
+**Stop when:** The user confirms the document is correct.
+Then proceed with best understanding.
 
 ---
 
@@ -82,30 +86,40 @@ Different information types transmit meaning more effectively in different forms
 
 ## Output: The Intent Document
 
-When the clarification loop ends, produce a clean final version:
+When the clarification loop ends, produce a clean final version. Always present the document in a markdown code block for easy copying:
 
 ```markdown
 # [Title]
 
-## Definition
-[Clear description — properties, components, appearance, boundaries]
+## Definition, Visuals
+[Clear description — properties, components, appearance, and core identity.]
+
+### Name 1
+- Description 1
+- Description 2
+- ...
+
+### Name N
+...
+
+## Boundaries & Constraints
+- **Scope Limits**: [What this project will NOT attempt to do.]
+- **Hard Constraints**: [Fixed requirements like budget, tech stack, or deadlines.]
+- **Negative Space**: [Clarify what this is NOT, to avoid "scope creep" or misinterpretation.]
 
 ## Execution
 
-### Interaction 1 — [Label]
+### Interaction 1: [Name]
 1. [Step]
 2. [Step]
 3. [Step]
 
-### Interaction 2 — [Label]
+### Interaction 2: [Name]
 1. [Step]
 2. [Step]
 
-### Interaction N — [Label]
+### Interaction N: [Name]
 ...
-
-## Open Questions
-- [Anything still uncertain]
 ```
 
 Then ask: **"Shall I proceed with this understanding?"** — act only after confirmation.

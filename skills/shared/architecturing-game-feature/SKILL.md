@@ -38,7 +38,7 @@ For each decision, present options in this format:
 ```
 
 Do not proceed to Step 3 until all decisions are resolved.
- 
+
 ### Example of a resolved tradeoff:
 ```
 **Decision: How should PlayerHealthSystem notify other systems of damage?**
@@ -65,6 +65,7 @@ Do not proceed to Step 3 until all decisions are resolved.
 
 ## Step 2 — Class Breakdown
 
+Present a class breakdown for all scripts needed to implement the feature.
 Group classes under folder headers. Do not print a full folder tree — just use the header as a separator.
 
 For each class, show:
