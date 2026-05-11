@@ -24,12 +24,12 @@ For each decision, present options in this format:
 **Option A — [name]** (Recommended)
 - [tradeoff bullet]
 - [tradeoff bullet]
-`[1–3 line code example showing the shape]`
+`[Short code snippets showing the main shape]`
  
 **Option B — [name]**
 - [tradeoff bullet]
 - [tradeoff bullet]
-`[1–3 line code example showing the shape]`
+`[Short code snippets showing the main shape]`
 
 **Options C, D, E, ...** (as needed)
 
@@ -40,18 +40,99 @@ For each decision, present options in this format:
 Do not proceed to Step 3 until all decisions are resolved.
 
 ### Example of a resolved tradeoff:
-```
+
 **Decision: How should PlayerHealthSystem notify other systems of damage?**
  
-**Option A — EventBus** (Recommended)
-- Zero coupling — subscriber needs no reference to the sender
-- Harder to trace; event origin is implicit
-`EventBus<PlayerDamagedEvent>.Raise(new PlayerDamagedEvent(damageAmount));`
- 
-**Option B — C# event on the class**
-- Explicit ownership — caller must hold a reference to subscribe
-- Easier to trace and debug
-`public event Action<float> OnDamageTaken;`
+**Option A — Abstractions-based approach** (Recommended)
+- You can add a "Fire Fruit," "Ghost Fruit," or "Exploding Fruit" simply by creating a new script and a new asset in your project folders. You never have to touch the FruitSpawner script again.
+- Designer-Friendly: A designer can create different "Level Configurations" by just swapping out which ScriptableObject assets are in the list.
+
+Core Abstraction:
+```c-sharp
+public abstract class FruitEffectSettings : ScriptableObject
+{
+    // The spawner calls this without needing to know the logic inside
+    public abstract void ApplyEffect(GameObject fruitInstance);
+}
+```
+Concrete Implementation:
+```c-sharp
+[CreateAssetMenu(menuName = "Fruit Effects/Ice")]
+public class IceFruitSettings : FruitEffectSettings
+{
+    public int count;
+    public int minRequiredDrops = 1;
+    public int maxRequiredDrops = 3;
+
+    public override void ApplyEffect(GameObject fruitInstance)
+    {
+        // Add the Ice component and configure it
+        var ice = fruitInstance.AddComponent<IceComponent>();
+        ice.Setup(Random.Range(minRequiredDrops, maxRequiredDrops));
+    }
+}
+[CreateAssetMenu(menuName = "Fruit Effects/Stacked")]
+public class StackedFruitSettings : FruitEffectSettings
+{
+    public int minStackSize = 2;
+    public int maxStackSize = 4;
+
+    public override void ApplyEffect(GameObject fruitInstance)
+    {
+        // Logic to stack fruits together
+    }
+}
+```
+The FruitSpawner:
+```c-sharp
+public class FruitSpawner : MonoBehaviour
+{
+    [SerializeField] private GameObject _fruitPrefab;
+    
+    // You can now drag and drop ANY FruitEffectSettings asset here in the Inspector
+    [SerializeField] private List<FruitEffectSettings> _activeEffects;
+
+    public void SpawnFruit()
+    {
+        GameObject newFruit = Instantiate(_fruitPrefab);
+
+        foreach (var effect in _activeEffects)
+        {
+            effect.ApplyEffect(newFruit);
+        }
+    }
+}
+```
+
+**Option B — Hardcoding specific classes**
+- Tight coupling
+- Can't spawn a new fruit type without you opening the script and adding more variables.
+```c-sharp
+public class FruitSpawner : MonoBehaviour
+{
+    [SerializeField] private GameObject _fruitPrefab;
+
+    // You have to drag and drop specific effect settings here, and you have to add new variables for each new effect type
+    [SerializeField] private IceFruitSettings _iceEffect;
+    [SerializeField] private StackedFruitSettings _stackedEffect;
+
+    public void SpawnFruit()
+    {
+        GameObject newFruit = Instantiate(_fruitPrefab);
+
+        if (_iceEffect != null)
+        {
+            // Add the Ice component and configure it
+            var ice = newFruit.AddComponent<IceComponent>();
+            ice.Setup(Random.Range(_iceEffect.minRequiredDrops, _iceEffect.maxRequiredDrops));
+        }
+
+        if (_stackedEffect != null)
+        {
+            // Logic to stack fruits together
+        }
+    }
+}
 ```
  
 ### Common decisions to check (not exhaustive):
@@ -105,87 +186,6 @@ PlayerHealthSubscriber : MonoBehaviour
 
 ---
 
-## Step 3 — Skeleton Code
-
-Generate one C# file per class.
-Destination folder: `Assets/ArchitectureSkeletons/[FeatureName]/`.
-Keep the skeleton as reference for the final implementation.
-
-### Rules for skeleton output:
-- Use real C# syntax and Unity patterns
-- Full method signatures: correct return types, parameter names with types and units
-- Method bodies: empty `{ }` or a single `// TODO` line — no real logic
-- Properties: auto-properties only `{ get; private set; }`
-- Events: declared with correct delegate type, no invocation logic
-- Interfaces: full signatures, no bodies
-- Comments: every method gets a short inline `//` comment describing what it does — this is the skeleton's purpose and will be deleted in real code. Also add comments for non-obvious architectural decisions or critical constraints.
-
-### Example skeleton output:
-
-```csharp
-// ──────────────────────────────────────────
-// HealthConfigSO.cs
-// ──────────────────────────────────────────
-[CreateAssetMenu]
-public class HealthConfigSO : ScriptableObject
-{
-    // No interface — only one implementation exists
-    [SerializeField] private float _maxHealth;
-    [SerializeField] private float _regenRatePerSecond;
-    [SerializeField] private float _invincibilityDurationSeconds;
-
-    public float MaxHealth                    => _maxHealth;
-    public float RegenRatePerSecond           => _regenRatePerSecond;
-    public float InvincibilityDurationSeconds => _invincibilityDurationSeconds;
-}
-
-// ──────────────────────────────────────────
-// PlayerHealthSystem.cs  (POCO — no MonoBehaviour)
-// ──────────────────────────────────────────
-public class PlayerHealthSystem
-{
-    public event Action<float> OnDamageTaken;  // float = damageAmount
-    public event Action        OnPlayerDied;
-
-    public float CurrentHealth { get; private set; }
-    public bool  IsAlive       { get; private set; }
-
-    private readonly HealthConfigSO _config;
-
-    public PlayerHealthSystem(HealthConfigSO config) { }  // inject config
-
-    #region Public Methods
-    public void ApplyDamage(float damageAmount) { }  // reduce health, trigger invincibility window
-    public void ApplyHeal(float healAmount)     { }  // increase health, clamp to max
-    public void Reset()                         { }  // restore full health, clear invincibility state
-    #endregion
-
-    #region Private Methods
-    private bool IsInvincible()  => default;  // true if inside invincibility window
-    private void TriggerDeath()  { }          // set IsAlive false, raise OnPlayerDied
-    private void ClampHealth()   { }          // keep CurrentHealth within [0, MaxHealth]
-    #endregion
-}
-
-// ──────────────────────────────────────────
-// PlayerHealthSubscriber.cs  (MonoBehaviour — event wiring only)
-// ──────────────────────────────────────────
-public class PlayerHealthSubscriber : MonoBehaviour
-{
-    #region Unity Lifecycle
-    private void OnEnable()  { }  // subscribe to PlayerHealthSystem events
-    private void OnDisable() { }  // unsubscribe to prevent leaks
-    #endregion
-
-    private void UpdateHealthBarWhenDamaged(float damageAmount) { }  // forward damage amount to UI
-    private void PlayDeathSequenceWhenPlayerDied()              { }  // trigger animator + audio
-}
-```
-
-- After skeleton is complete, wait for user approval. If user requests changes, revise skeletons accordingly.
-
----
-
-## Step 4 — Continue
+## Step 3 — Continue
 
 After approval, proceed to the next step of the workflow defined in AGENTS.md, CLAUDE.md, or any other agent instruction file.
