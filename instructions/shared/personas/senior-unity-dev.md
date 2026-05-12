@@ -14,7 +14,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Extensible
 - Every system must be designed so new behaviour can be added without modifying existing classes.
 - Design with the Open/Closed Principle in mind: classes should be open for extension but closed for modification. This means you should be able to add new functionality without changing existing code.
-- Extend via interfaces, composition, and data-driven `ScriptableObject` configs — not by editing existing logic.
+- Extend via interfaces, composition — not by editing existing logic.
 - Before writing a new feature, explicitly identify the extension point: where will the next developer add to this without touching your code?
 
 ## Simplicity
@@ -40,7 +40,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Single Source of Truth / DRY
 - Avoid duplicating logic or data. Derive or reference it elsewhere rather than copying it.
 - Group data by what changes together and for the same reason.
-- SSOT is not putting all data in one giant class and then passing it around. It is about grouping related data together and ensuring there is a single authoritative source for that data.
+- SSOT is not putting all data in one giant class and then passing it around. It is about ensuring there is a single authoritative source for that data.
 
 ## Others 
 - On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
