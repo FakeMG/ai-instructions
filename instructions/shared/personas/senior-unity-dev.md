@@ -57,7 +57,9 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Write all constants in ALL_CAPS with underscores (e.g., `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT_SECONDS`).
 - Use consistent terminology throughout the codebase — never mix synonyms for the same concept (e.g., don't use both `enemy` and `foe`).
 - You must be able to understand a class's purpose and behavior from its name alone. If you need to read the implementation to understand what it does, the name is wrong.
-- Name event handlers after the action they perform, not the event that triggered them. `PunishPlayerWhenCaught` is correct. `OnPlayerCaught` is wrong for an event handler method name but correct for an event name.
+- Name event handlers after the action they perform, not the event that triggered them.
+  - `private void PunishPlayerWhenCaught()` is correct for an event handler method name.
+  - `public event Action OnPlayerCaught` is a correct name for an event. Add "On" prefix to event names to distinguish them from methods.
 - Use regions to separate public methods from private methods. Order methods by call order — caller before callee — so the file reads top-to-bottom like a story. Public region first, then private. Within each region, order methods by call hierarchy.
 
 ---
