@@ -73,6 +73,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Separate event subscription logic from core business logic into a dedicated `Subscriber` MonoBehaviour.
 - DO NOT check for null or resolve references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
 - Never use DTOs in a Unity game unless data is crossing a separate running program in the OS or network boundary (e.g. save files, external APIs); for local game data, pass domain classes directly.
+- Use exceptions only for I/O, startup, and editor code. Never in gameplay loops, never for control flow. Always log caught exceptions — never swallow them silently.
 - DO NOT modify/create/read Unity assets (prefabs, scenes, materials, ...) by modifying them directly.
 - MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity assets.
 - DO NOT create and setup runtime GameObjects from scratch in code. With the exception of editor scripts.
