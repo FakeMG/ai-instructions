@@ -1,7 +1,7 @@
 # Technology Stack
 You must utilize the following libraries and tools where applicable.
 If you don't find these tools in the project, ask user to add them instead of using alternatives.
-- **UniTask:** For asynchronous programming (replaces Coroutines).
+- **UniTask:** To replaces Coroutines.
 - **DOTween:** For animations and tweens.
 - **Addressables:** For asset management and loading.
 - **Cinemachine:** For camera control.
