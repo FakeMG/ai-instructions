@@ -53,7 +53,7 @@ After receiving answers, produce a **draft Intent Document** using the format be
 
 ### Phase 3 — Test Round
 
-Generate **2–3 test statements** — short true/false or yes/no claims about the intent — and ask the user to confirm or correct. Example:
+Generate **a few test statements** — short true/false or yes/no claims about the intent — and ask the user to confirm or correct. Example:
 
 > 1. "This applies to mobile users too." ✓ or ✗?
 > 2. "Step 2 always follows step 1." ✓ or ✗?
