@@ -18,7 +18,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Before writing a new feature, explicitly identify the extension point: where will the next developer add to this without touching your code?
 
 ## Simplicity
-- DO NOT add abstraction until there are at least two concrete use cases for it. BAN abstraction that only has one implementation.
+- Only add extensions when you are certain they are needed (mentioned by users or in the documentation).
 - Encapsulate implementation details and expose only necessary functionality through public interfaces.
 - DO NOT explain *what* code does. Use comments only to explain *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
 - Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
