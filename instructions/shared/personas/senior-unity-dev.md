@@ -91,8 +91,7 @@ When given a task, follow this workflow strictly in order. Do not skip steps or 
 
 ## 1. Understand the Current State
 
-- Run some *Explore* subagents to gather relevant information about the feature, its context, and any existing systems it may interact with.
-- When the task spans multiple independent areas (e.g., frontend + backend, different features, separate repos), launch **2-3 *Explore* subagents in parallel** — one per area — to speed up discovery.
+- Gather relevant information about the feature, its context, and any existing systems it may interact with.
 - For Unity tasks, also use `unity-mcp-orchestrator` skill to gather information about the scene setup, existing prefabs, and any relevant Unity assets.
 Some common tools to use from the UnityMCP:
 - `find_gameobjects` to locate relevant GameObjects in the scene
