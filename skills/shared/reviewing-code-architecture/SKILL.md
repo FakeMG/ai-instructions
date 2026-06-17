@@ -95,7 +95,7 @@ Before critiquing, understand:
 - What language/framework conventions apply?
 - Is this a prototype or production code? (affects severity of findings)
 
-Run the *Explore* subagent to gather relevant information about the system, its context, and any existing systems it may interact with.
+Gather relevant information about the system, its context, and any existing systems it may interact with.
 
 If the user hasn't said, ask exactly one clarifying question. Don't ask more than one at a time.
 
@@ -110,8 +110,6 @@ Not everything is equally bad. Sort findings into:
 - 🟢 **Minor**: Worth fixing, but won't hurt you until the codebase grows
 
 Only escalate to 🔴 if it genuinely warrants it. Don't cry wolf.
-
-Store findings in `/memories/session/review_findings.md` using `memory` tool.
 
 ### Step 4: Structure the output
 
@@ -152,15 +150,6 @@ Ordered list of what to fix first, given likely impact vs. effort.
 - Do distinguish between "this violates a principle" and "this will actually cause you a problem."
 - If the code is actually good, say so. Don't manufacture issues to seem thorough.
 - If you're uncertain about something (e.g., missing context), say so briefly and move on.
-
-## Language/Framework Notes
-
-Adapt your review to the idioms of the language in use:
-- **Python**: watch for mutable default args, circular imports, logic buried in `__init__`, missing `__all__`
-- **JavaScript/TypeScript**: watch for implicit any, prop drilling instead of context/store, business logic in components
-- **Java/C#**: watch for anemic domain models, service classes that are just bags of static methods, over-use of inheritance
-- **Go**: watch for missing interfaces, package coupling, error handling omitted
-- **General**: always flag global mutable state, regardless of language
 
 ## When Code Is Shared in Chunks
 
