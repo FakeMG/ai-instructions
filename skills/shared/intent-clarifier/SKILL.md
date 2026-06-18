@@ -89,7 +89,7 @@ Different information types transmit meaning more effectively in different forms
 When the clarification loop ends, produce a clean final version. Always present the document in a markdown code block for easy copying:
 
 ```markdown
-# [Title]
+# [Title] (Round N)
 
 ## Definition, Visuals
 [Clear description — properties, components, appearance, and core identity.]
