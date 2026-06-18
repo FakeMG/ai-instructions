@@ -34,7 +34,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Decoupling
 - Use dependency injection to manage dependencies and reduce coupling between classes.
 - Avoid tight coupling between systems. Use events, interfaces, or messaging systems to allow components to communicate without direct references.
-- Favor composition over inheritance to create flexible and reusable code.
+- Prefer composition for behavior reuse and flexibility, especially when features may vary independently.
+- Use inheritance when there is a clear “is-a” relationship, when integrating with framework-required base classes, or when polymorphism meaningfully simplifies the design. Avoid deep or fragile inheritance hierarchies.
 - Avoid global state and singletons. If you must use them, ensure they are well-encapsulated and do not expose mutable state.
 
 ## Single Source of Truth / DRY
