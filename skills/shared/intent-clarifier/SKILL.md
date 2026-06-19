@@ -30,7 +30,7 @@ Every question asked during clarification is ultimately trying to fill in one of
 
 ---
 
-## The Clarification Process
+## The Clarification Process (Round N)
 
 ### Phase 1 — First Pass
 
@@ -89,7 +89,7 @@ Different information types transmit meaning more effectively in different forms
 When the clarification loop ends, produce a clean final version. Always present the document in a markdown code block for easy copying:
 
 ```markdown
-# [Title] (Round N)
+# [Title]
 
 ## Definition, Visuals
 [Clear description — properties, components, appearance, and core identity.]
