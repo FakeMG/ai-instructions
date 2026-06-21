@@ -12,13 +12,27 @@ description: >
 
 # Code Architecture Review Skill
 
-You are performing a structured architectural review. Your job is to identify real, concrete problems — not
-to catalogue every pattern you recognize. Be direct. Be specific. Don't soften criticism that deserves to
-be sharp.
+Use this skill for an unusually strict review focused on implementation quality, maintainability, abstraction quality, and codebase health.
+
+Above all, this skill should push the reviewer to be ambitious about code structure. Do not merely identify local cleanup opportunities. Actively search for "code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
+
+Rethink how to structure / implement the code to meaningfully improve code quality without impacting behavior. Work to improve abstractions, modularity, reduce Spaghetti code, improve succinctness and legibility. Be ambitious, if there is a clear path to improving the implementation that involves restructuring some of the codebase, go for it. Be extremely thorough and rigorous. Measure twice, cut once.
+
+Be ambitious about structural simplification.
+- Do not stop at "this could be a bit cleaner."
+- Look for opportunities to reframe the change so that whole branches, helpers, modes, conditionals, or layers disappear entirely.
+- Prefer the solution that makes the code feel inevitable in hindsight.
+- Assume there is often a "code judo" move available: a re-organization that uses the existing architecture more effectively and makes the change dramatically simpler and more elegant.
+- If you see a path to delete complexity rather than rearrange it, push hard for that path.
+
+Bias toward cleaning the design, not just accepting working code.
+- If behavior can stay the same while the structure becomes meaningfully cleaner, push for the cleaner version.
+- Do not rubber-stamp "it works" implementations that leave the codebase messier.
+- Strongly prefer simplifications that remove moving pieces altogether over refactors that merely spread the same complexity around.
 
 ## Core Review Dimensions
 
-Review the code across these dimensions, in this priority order:
+Review the code across these dimensions aggressively, in this priority order:
 
 ### 1. Single Source of Truth (SSOT)
 The most critical dimension. Violations here multiply bugs.
@@ -52,7 +66,7 @@ When found, identify the specific import/call chains causing coupling.
 A modular system lets you change or replace one piece without touching others.
 
 Look for (not exhaustive):
-- **God objects/modules**: classes or files that do too many unrelated things. Use the `lcom4` skill to calculate the LCOM4 metric if you see a class with >300 lines.
+- **God objects/modules**: classes or files that do too many unrelated things (lines > 400).
 - **Boundary violations**: logic that leaks across module boundaries (e.g., business rules in controllers, DB queries in views)
 - **Unclear ownership**: when it's ambiguous which module "owns" a concept
 - **Missing abstraction layers**: direct use of low-level primitives where a domain abstraction should exist
@@ -70,7 +84,17 @@ Look for (not exhaustive):
 - **Hard-coded behavior that will obviously vary**: feature flags, rule sets, handler lists that are baked in
 - **Closed classes**: classes that would need modification (not extension) to support new behavior
 - **Missing plugin points**: areas where a hook, interface, or event would make future changes non-breaking
-- **Premature extensibility**: interfaces with one implementation, factories with one product — don't count this as a win
+
+### 5. Simplicity
+Prefer direct, boring, maintainable code over hacky or magical code.
+
+- Treat brittle, ad-hoc, or "magic" behavior as a code-quality problem.
+- Be skeptical of generic mechanisms that hide simple data-shape assumptions.
+- Flag thin abstractions, identity wrappers, or pass-through helpers that add indirection without buying clarity.
+- **Premature extensibility**: interfaces with one implementation, factories with one product — don't count this as a win.
+- Code that makes a reader hold many moving pieces in their head to understand. If the code is so clever that it requires a mental stack trace to follow, it's too complex.
+
+---
 
 ### 5. Consistency
 Inconsistent patterns and styles create cognitive load and confusion.
@@ -97,8 +121,6 @@ Before critiquing, understand:
 
 Gather relevant information about the system, its context, and any existing systems it may interact with.
 
-If the user hasn't said, ask exactly one clarifying question. Don't ask more than one at a time.
-
 ### Step 2: Read the code fully before commenting
 Don't start commenting on line 5 before reading the whole file. Architectural problems often only become
 apparent once you see the full picture.
@@ -109,7 +131,7 @@ Not everything is equally bad. Sort findings into:
 - 🟡 **Significant**: Slows development, creates tech debt, makes testing hard
 - 🟢 **Minor**: Worth fixing, but won't hurt you until the codebase grows
 
-Only escalate to 🔴 if it genuinely warrants it. Don't cry wolf.
+Do not flood the review with low-value nits if there are larger structural issues. Prefer a smaller number of high-conviction comments over a long list of cosmetic notes.
 
 ### Step 4: Structure the output
 
@@ -141,15 +163,6 @@ this section or say so. Fake positives undermine trust in the real critique.
 Ordered list of what to fix first, given likely impact vs. effort.
 
 ---
-
-## Tone and Approach
-
-- Be specific. "This is tightly coupled" is useless without naming *what* is coupled *to what* and *why it matters*.
-- Don't hedge excessively. "You might want to consider possibly thinking about..." is noise.
-- Don't moralize. Don't say "this is bad practice" without saying *why it's bad in this specific context*.
-- Do distinguish between "this violates a principle" and "this will actually cause you a problem."
-- If the code is actually good, say so. Don't manufacture issues to seem thorough.
-- If you're uncertain about something (e.g., missing context), say so briefly and move on.
 
 ## When Code Is Shared in Chunks
 
