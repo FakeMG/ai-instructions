@@ -21,6 +21,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Only add extensions when you are certain they are needed (mentioned by users or in the documentation).
 - Encapsulate implementation details and expose only necessary functionality through public interfaces.
 - DO NOT explain *what* code does. Use comments only to explain *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
+- Always write comment for classes. Make sure to update the comment if you change the class's behavior.
 - Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
 
 ## Modularity
@@ -66,7 +67,6 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ---
 
 # Unity Coding Guidelines
-- Prefer UniTask over Coroutines.
 - `MonoBehaviours` should be thin. They should primarily handle Unity-specific tasks (rendering, input, physical collisions) and delegate all decision-making math to a separate POCO.
 - If the type requires the Unity Engine to be "running" (like a `Collider` or `Renderer`), keep it out of the POCO. If it is purely mathematical data (like `Vector3`), it is acceptable for the sake of code readability and sanity.
 - Always track the `AsyncOperationHandle` and release it when done to prevent leaks.
@@ -75,8 +75,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - DO NOT check for null or resolve references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
 - Never use DTOs in a Unity game unless data is crossing a separate running program in the OS or network boundary (e.g. save files, external APIs); for local game data, pass domain classes directly.
 - Use exceptions only for I/O, startup, and editor code. Never in gameplay loops, never for control flow. Always log caught exceptions — never swallow them silently.
-- DO NOT modify/create/read Unity assets (prefabs, scenes, materials, ...) by modifying them directly.
-- MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity assets.
+- DO NOT modify/create/read Unity serialized assets (prefabs, scenes, materials, ...) by modifying them directly.
+- MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity serialized assets (not scripts).
 - DO NOT create and setup runtime GameObjects from scratch in code. With the exception of editor scripts.
 - All GameObjects MUST be created as prefabs and then instantiated. This ensures the prefab's components and serialized fields are properly set up.
 
@@ -86,74 +86,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ---
 
-# Workflow for Task Execution
-
-When given a task, follow this workflow strictly in order. Do not skip steps or jump ahead:
-
-## 1. Understand the Current State
-
-- Gather relevant information about the feature, its context, and any existing systems it may interact with.
-- For Unity tasks, also use `unity-mcp-orchestrator` skill to gather information about the scene setup, existing prefabs, and any relevant Unity assets.
-Some common tools to use from the UnityMCP:
-- `find_gameobjects` to locate relevant GameObjects in the scene
-- `manage_prefabs`: to inspect existing prefabs and their components
-- `manage_scene`: to understand the current scene hierarchy and setup
-
-**Exit condition:** You can describe what currently exists in the relevant areas.
-
-## 2. Understand the Desired State
-
-This will depend on the specific task, but the general pattern is:
-
-- Step 1: Use the `askQuestion` tool to ask clarifying questions to resolve any ambiguity about the desired state. Do not assume — ask.
-   - If the user doesn't really know what they want, present some choices and let user choose.
-- Step 2: Describe your understanding back to the user — lead with the most critical part (the part everything else depends on).
-- Step 3: Ask: *"Is this correct?"*
-- Step 4: Incorporate user feedback and repeat from step 2 until the user confirms.
-
-**Exit condition:** User explicitly confirms your description of the desired state is correct.
-
-## 3. Break down the task
-
-- Step 1: Break down the task into smaller, manageable chunks that an LLM can handle in a single pass. This will help make the implementation more manageable.
-- Step 2: Mark which chunks can run in parallel vs. which block on prior chunks.
-- Step 3: Store the breakdown in a structured format to `/memories/session/plan.md` via `memory` tool for reference during implementation.
-- Step 4: Present the breakdown to the user and wait for explicit user approval before proceeding to implementation.
-
-**Exit condition:** User approves the plan.
-
-<plan_style_guide>
-```markdown
-### Plan: {Title (2-10 words)}
-
-**Steps**
-1. {Implementation step-by-step — note dependency ("*depends on N*") or parallelism ("*parallel with step N*") when applicable}
-2. {For plans with 5+ steps, group steps into named phases with enough detail to be independently actionable}
-```
-</plan_style_guide>
-
-## 4. Implement
-
-- Step 1: Write code following the plans and architecture you designed, adhering to the coding guidelines.
-  - 1.1. Implement each chunk of the breakdown one at a time, starting with the most foundational pieces that other parts depend on.
-  - 1.2. Run parallel subagents for independent chunks (marked in the plan) to speed up implementation when possible.
-  - 1.3. Then wait for instructions for the next chunk, and implement it, and so on.
-- Step 2: Use `unity-mcp-orchestrator` skill to implement any Unity-specific logic, such as modifying scenes, creating prefabs, or setting up components.
-- Step 3: After implementation, use `unity-mcp-orchestrator` skill to run the existing tests to see if the new changes cause the tests to fail. If they do, fix the issues and repeat until tests pass.
-
-**Exit condition:** All chunks implemented, tests pass, user confirms done.
-
-## 5. Validate
-
-Validate the code against the principles above and check if it meets the feature requirements. If it doesn't, revise the code until it does.
-
-## 6. Output
-
-Present the final code, along with a summary of the architecture and design decisions made, audited against the above principles.
-
----
-
 # Tone & Communication Style
-- Be direct, technical and concise. Skip filler phrases like "Great question!" or "Certainly!".
+- When reporting information to me, be extremely concise and sacrifice grammar for sake of concision.
 - Question user's decisions when they seem suboptimal, and suggest better alternatives.
 - When multiple valid approaches exist, list the tradeoffs and ask which the user prefers before writing code.

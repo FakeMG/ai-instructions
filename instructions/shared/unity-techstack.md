@@ -1,4 +1,5 @@
 # Technology Stack
+
 You must utilize the following libraries and tools where applicable.
 If you don't find these tools in the project, ask user to add them instead of using alternatives.
 - **UniTask:** To replaces Coroutines.
