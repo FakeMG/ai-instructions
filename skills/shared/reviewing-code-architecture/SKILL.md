@@ -32,10 +32,10 @@ Bias toward cleaning the design, not just accepting working code.
 
 ## Core Review Dimensions
 
-Review the code across these dimensions aggressively, in this priority order:
+Review the code across all these dimensions aggressively. MUST find and call out violations in all of these areas. Do not give a pass on any of them.:
 
 ### 1. Single Source of Truth (SSOT)
-The most critical dimension. Violations here multiply bugs.
+Duplicated state multiplies bugs.
 
 Look for (not exhaustive):
 - **Duplicated state**: the same data stored/derived in multiple places
@@ -48,17 +48,14 @@ When found, name the specific locations and explain exactly what state is duplic
 
 ---
 
-### 2. Decoupling
-Tight coupling creates change-resistance and untestable code.
+### 2. Extensibility
+Good architecture lets you add features without rewriting existing code.
 
 Look for (not exhaustive):
-- **Direct class/module instantiation** inside business logic instead of dependency injection
-- **Cross-layer imports**: e.g., UI importing DB logic, or domain layer importing framework code
-- **Implicit dependencies**: functions that reach into global state or singletons without declaring them
-- **Event-driven violations**: components that call each other directly when they should communicate via events or interfaces
-- **Test-hostile design**: code that can't be unit tested without spinning up databases, APIs, or other services
-
-When found, identify the specific import/call chains causing coupling.
+- **Switch/if-else chains on type**: should usually be polymorphism or a strategy/registry pattern
+- **Hard-coded behavior that will obviously vary**: feature flags, rule sets, handler lists that are baked in
+- **Closed classes**: classes that would need modification (not extension) to support new behavior
+- **Missing plugin points**: areas where a hook, interface, or event would make future changes non-breaking
 
 ---
 
@@ -76,14 +73,19 @@ Call out both under-abstraction AND over-engineering. Neither is good.
 
 ---
 
-### 4. Extensibility
-Good architecture lets you add features without rewriting existing code.
+### 4. Decoupling
+Tight coupling creates change-resistance and untestable code.
 
 Look for (not exhaustive):
-- **Switch/if-else chains on type**: should usually be polymorphism or a strategy/registry pattern
-- **Hard-coded behavior that will obviously vary**: feature flags, rule sets, handler lists that are baked in
-- **Closed classes**: classes that would need modification (not extension) to support new behavior
-- **Missing plugin points**: areas where a hook, interface, or event would make future changes non-breaking
+- **Direct class/module instantiation** inside business logic instead of dependency injection
+- **Cross-layer imports**: e.g., UI importing DB logic, or domain layer importing framework code
+- **Implicit dependencies**: functions that reach into global state or singletons without declaring them
+- **Event-driven violations**: components that call each other directly when they should communicate via events or interfaces
+- **Test-hostile design**: code that can't be unit tested without spinning up databases, APIs, or other services
+
+When found, identify the specific import/call chains causing coupling.
+
+---
 
 ### 5. Simplicity
 Prefer direct, boring, maintainable code over hacky or magical code.
@@ -96,7 +98,7 @@ Prefer direct, boring, maintainable code over hacky or magical code.
 
 ---
 
-### 5. Consistency
+### 6. Consistency
 Inconsistent patterns and styles create cognitive load and confusion.
 
 Look for (not exhaustive):
