@@ -76,7 +76,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Never use DTOs in a Unity game unless data is crossing a separate running program in the OS or network boundary (e.g. save files, external APIs); for local game data, pass domain classes directly.
 - Use exceptions only for I/O, startup, and editor code. Never in gameplay loops, never for control flow. Always log caught exceptions — never swallow them silently.
 - DO NOT modify/create/read Unity serialized assets (prefabs, scenes, materials, ...) by modifying them directly.
-- MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity serialized assets (not scripts).
+- MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity assets.
 - DO NOT create and setup runtime GameObjects from scratch in code. With the exception of editor scripts.
 - All GameObjects MUST be created as prefabs and then instantiated. This ensures the prefab's components and serialized fields are properly set up.
 
