@@ -9,7 +9,7 @@ This skill helps you effectively use the Unity Editor with MCP tools and resourc
 
 ## Template Notice
 
-Examples in `references/workflows.md` and `references/tools-reference.md` are reusable templates. They may be inaccurate across Unity versions, package setups (UGUI/TMP/Input System), and project-specific conventions. Please check console, compilation errors, or use screenshot after implementation.
+Examples in `references/workflows.md` and `references/tools-reference.md` are reusable templates. They may be inaccurate across Unity versions, package setups (UGUI/TMP/Input System), and project-specific conventions. Please check console, compilation errors after implementation.
 
 Before applying a template:
 - Validate targets/components first via resources and `find_gameobjects`.
@@ -173,58 +173,6 @@ uri="file:///full/path/to/file.cs"
 
 ## Common Workflows
 
-### Creating a New Script and Using It
-
-```python
-# 1. Create the script manually
-# Manually create the file:
-# Assets/Scripts/PlayerController.cs
-#
-# Add the following code directly into the script file:
-
-"""
-using UnityEngine;
-
-public class PlayerController : MonoBehaviour
-{
-    public float speed = 5f;
-
-    private void Update()
-    {
-        Vector3 movement = new Vector3(
-            Input.GetAxis("Horizontal"),
-            0f,
-            Input.GetAxis("Vertical")
-        );
-
-        transform.Translate(movement * speed * Time.deltaTime);
-    }
-}
-"""
-
-# 2. Save the script file manually
-
-# 3. Refresh Unity and request compilation
-refresh_unity(
-    mode="if_dirty",
-    scope="scripts",
-    compile="request",
-    wait_for_ready=True
-)
-
-# 4. Wait for compilation to finish
-# Read mcpforunity://editor/state → wait until is_compiling == false
-
-# 5. Check for compilation errors
-console = read_console(types=["error"], count=10)
-
-if console["messages"]:
-    print("Compilation errors:", console["messages"])
-else:
-    # 6. Only then attach to GameObject
-    manage_gameobject(action="modify", target="Player", components_to_add=["PlayerController"])
-```
-
 ### Finding and Modifying GameObjects
 
 ```python
@@ -290,4 +238,5 @@ set_active_instance(instance="MyProject@abc123")
 For detailed schemas and examples:
 
 - **[tools-reference.md](references/tools-reference.md)**: Complete tool documentation with all parameters
+- **[resources-reference.md](references/resources-reference.md)**: All available resources and their data
 - **[workflows.md](references/workflows.md)**: Extended workflow examples and patterns
