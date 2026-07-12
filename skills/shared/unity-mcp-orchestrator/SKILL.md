@@ -46,33 +46,13 @@ Avoid `refresh_unity` when:
 - You are still making a series of related file edits that can be refreshed together.
 - You only need to inspect current scene/editor state.
 
-### 2. After Writing/Editing Scripts: Refresh Unity, Wait for Compilation, and Check Console
-
-```python
-# After manually creating or editing a script file:
-# Do not use create_script, script_apply_edits, apply_text_edits,
-# validate_script, delete_script, get_sha, or find_in_file.
-# Create and edit the .cs file manually, then save it.
-
-# 1. Refresh Unity and request compilation
-refresh_unity(
-    mode="if_dirty",             # "if_dirty" | "force"
-    scope="scripts",             # "assets" | "scripts" | "all"
-    compile="request",           # "none" | "request"
-    wait_for_ready=True          # bool - wait until editor ready
-)
-
-# 2. Poll editor state until compilation completes
-# Read mcpforunity://editor/state → wait until is_compiling == false
-# Also wait if is_domain_reload_pending == true
-
-# 3. Check for compilation errors
-read_console(types=["error"], count=10, include_stacktrace=True)
+For edits that doesn't require compilation, you can skip `refresh_unity` and `read_console` entirely.
+Use `dotnet build` instead to validate code changes without triggering Unity compilation. This is faster and avoids domain reloads. Choose the correct `.csproj` file for the scripts you are editing.
+```bash
+dotnet build Assembly-CSharp.csproj --no-restore --no-dependencies --nologo --verbosity:minimal
 ```
 
-**Why:** Unity must import and compile scripts before they're usable. `refresh_unity` is very slow, so batch related script/file edits first, then refresh once after saving. After the refresh, wait for compilation to finish and check the console.
-
-### 3. Use `batch_execute` for Multiple Operations
+### 2. Use `batch_execute` for Multiple Operationsy
 
 ```python
 # 10-100x faster than sequential calls
@@ -97,9 +77,22 @@ batch_execute(commands=[
 ])
 ```
 
-### 4. Check Console After Major Changes
+### 3. Check Console After Major Code Changes
 
 ```python
+# 1. Refresh Unity and request compilation
+refresh_unity(
+    mode="if_dirty",             # "if_dirty" | "force"
+    scope="scripts",             # "assets" | "scripts" | "all"
+    compile="request",           # "none" | "request"
+    wait_for_ready=True          # bool - wait until editor ready
+)
+
+# 2. Poll editor state until compilation completes
+# Read mcpforunity://editor/state → wait until is_compiling == false
+# Also wait if is_domain_reload_pending == true
+
+# 3. Check for compilation errors
 read_console(
     action="get",
     types=["error", "warning"],  # Focus on problems
@@ -108,7 +101,7 @@ read_console(
 )
 ```
 
-### 5. Always Check `editor_state` Before Complex Operations
+### 4. Always Check `editor_state` Before Complex Operations
 
 ```python
 # Read mcpforunity://editor/state to check:
@@ -230,8 +223,8 @@ set_active_instance(instance="MyProject@abc123")
 | "stale_file" error | File changed since SHA | Do not use script editing tools; open the script manually and inspect the latest file contents before editing |
 | Connection lost | Domain reload | Wait ~5s, reconnect |
 | Commands fail silently | Wrong instance | Check `set_active_instance` |
-| Script component cannot be attached | Script has not compiled yet or has errors  | Refresh Unity, wait for compilation, then check console errors                                                |
-| Compilation errors appear | Manual script edit introduced invalid code | Open the script manually, fix the issue, save, refresh Unity, wait for compilation, then re-check console     |
+| Script component cannot be attached | Script has not compiled yet or has errors  | Refresh Unity, wait for compilation, then check console errors |
+| Compilation errors appear | Manual script edit introduced invalid code | Open the script manually, fix the issue, save, refresh Unity, wait for compilation, then re-check console |
 
 ## Reference Files
 

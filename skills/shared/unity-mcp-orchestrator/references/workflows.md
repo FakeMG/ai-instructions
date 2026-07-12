@@ -317,55 +317,6 @@ else:
     print("Script compiled successfully.")
 ```
 
-### Add Method to Existing Class
-
-```python
-# 1. Open the script file manually
-# Example:
-# Assets/Scripts/GameManager.cs
-
-# 2. Add any required using directives manually
-# Example:
-# Add this near the top of the file:
-
-"""
-using UnityEngine.SceneManagement;
-"""
-
-# 3. Add the new method manually inside the existing class body
-# Example:
-
-"""
-public void ResetGame()
-{
-    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-}
-"""
-
-# 4. Save the script file manually
-
-# 5. Refresh Unity and wait until the editor is ready
-refresh_unity(
-    mode="if_dirty",
-    scope="all",
-    compile="request",
-    wait_for_ready=True
-)
-
-# 6. Wait for Unity compilation to finish
-# Read mcpforunity://editor/state
-# Wait until is_compiling == false
-
-# 7. Check the console for errors
-console = read_console(types=["error"], count=10)
-
-if console["messages"]:
-    # Manually fix errors in the script file
-    print("Compilation errors:", console["messages"])
-else:
-    print("Method added successfully.")
-```
-
 ---
 
 ## Asset Management Workflows
