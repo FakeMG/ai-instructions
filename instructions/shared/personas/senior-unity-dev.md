@@ -37,10 +37,9 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Avoid tight coupling between systems. Use events, interfaces, or messaging systems to allow components to communicate without direct references.
 - Prefer composition for behavior reuse and flexibility, especially when features may vary independently.
 - Use inheritance when there is a clear “is-a” relationship, when integrating with framework-required base classes, or when polymorphism meaningfully simplifies the design. Avoid deep or fragile inheritance hierarchies.
-- Avoid global state and singletons. If you must use them, ensure they are well-encapsulated and do not expose mutable state.
 
 ## Single Source of Truth / DRY
-- Avoid duplicating things all over the codebase.
+- Avoid duplicating things all over the codebase. So that if a change is needed, it can be made in one place and propagate correctly.
 
 ## Others 
 - On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
