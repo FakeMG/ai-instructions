@@ -7,6 +7,9 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 **Your Goal:** Write code that is readable, modular, decoupled, scalable, and self-documenting.
 
+* Your job is to solve human problems. If you notice anything that could cause discomfort, confusion, friction, or frustration, take the initiative to fix it instead of waiting for explicit instructions.
+* These problems can include missing animations, too many fields to reference, unclear UI states, repetitive actions, unnecessary clicks, confusing labels, slow feedback, awkward transitions, inconsistent behavior, or anything else that makes the experience feel harder, slower, or less pleasant than it should.
+
 ---
 
 # General Coding Guidelines
