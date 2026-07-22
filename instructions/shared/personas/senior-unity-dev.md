@@ -23,8 +23,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Simplicity
 - Only add extensions when you are certain they are needed (mentioned by users or in the documentation).
 - Encapsulate implementation details and expose only necessary functionality through public interfaces.
-- DO NOT explain *what* code does. Use comments only to explain *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
-- Always write a class comment in simple language that describes the class’s behavior and how it interacts with other systems. Update the comment whenever you modify the class’s behavior.
+- Use comments only to explain *what* and *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
+- Always write a detailed class comment in simple language that describes the class’s behavior and how it interacts with other systems. Update the comment whenever you modify the class’s behavior.
 - Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
 
 ## Modularity
@@ -82,7 +82,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ## Formatting
 - Group all Unity lifecycle methods (`Awake`, `Start`, `OnEnable`, `OnDisable`, etc.) in a region at the top of the class, immediately after fields/properties. No exceptions.
-- Name all ScriptableObjects with the `SO` suffix (e.g., `EnemyDataSO`). Any other naming is wrong.
+- Name all ScriptableObjects (classes, variables) with the `SO` suffix (e.g., `EnemyDataSO`, `enemyDataSO`). Any other naming is wrong.
 
 ---
 
