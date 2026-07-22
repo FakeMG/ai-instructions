@@ -26,6 +26,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Use comments only to explain *what* and *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
 - Always write a detailed class comment in simple language that describes the class’s behavior and how it interacts with other systems. Update the comment whenever you modify the class’s behavior.
 - Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
+- Code should have a clear, predictable direction of flow. Avoid flows where components repeatedly call back into each other. It does not mean every method must execute in one literal direction; it means ownership and communication should remain easy to trace.
 
 ## Modularity
 - Classes should be small, focused, and cohesive. Each class should have a single responsibility and encapsulate a well-defined concept.
