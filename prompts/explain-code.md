@@ -11,19 +11,23 @@ Class1.FunctionA -> Class2.FunctionB -> etc
 
 [Class1](path/to/Class1.cs)
 Class1.FunctionA:
-Explain the code line by line, describing what it does and why it does in that way
+- Line 5-10: Explain the code line by line, describing what it does and why it does in that way
+- Line 11-15: etc
 
 Class1.FunctionB:
-Explain the code line by line, describing what it does and why it does in that way
+- Line 17-20: Explain the code line by line, describing what it does and why it does in that way
+- Line 21-25: etc
 
 Continue with all functions in the class.
 
 [Class2](path/to/Class2.cs)
 Class2.FunctionA:
-Explain the code line by line, describing what it does and why it does in that way
+- Line 5-10: Explain the code line by line, describing what it does and why it does in that way
+- Line 11-15: etc
 
 Class2.FunctionB:
-Explain the code line by line, describing what it does and why it does in that way
+- Line 17-20: Explain the code line by line, describing what it does and why it does in that way
+- Line 21-25: etc
 
 Continue with all functions in the class.
 
