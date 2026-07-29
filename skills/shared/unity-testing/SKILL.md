@@ -27,7 +27,7 @@ If the class is designed to clamp rather than throw, assert the clamped result e
 - DO NOT test private or internal methods directly — if a private method feels like it needs its own test, STOP. It likely belongs in a separate class.
 - DO NOT change the value of private or internal fields — if you need it to reach into a class, STOP. The design needs to change instead.
 - If the code structure is too hard to test, STOP and notify the user that the design needs to change. Don't try to force a test on 
-- Avoid Logic in Tests: If your test contains if statements or complex loops, you probably need a test for your test. Keep them dead simple.
+- Avoid complex logic in tests: If your test contains if statements or complex loops, you probably need a test for your test. Keep them dead simple.
 - Use dependency injection to provide mocked implementations of dependencies, so tests can isolate the unit under test and assert on interactions.
 - Mock external systems (audio, scoring, persistence, time) to verify your code talks to them correctly without relying on their real behavior.
 
