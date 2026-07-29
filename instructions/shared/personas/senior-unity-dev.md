@@ -48,8 +48,6 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Others 
 - On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
 - Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
-- Don't write tests unless user explicitly asks for them.
-- Be consistent in your coding style and naming conventions. Follow established patterns in the codebase unless there is a good reason to deviate.
 
 ## Formatting
 - Follow Microsoft C# conventions: PascalCase for classes and methods, camelCase for variables and parameters.
