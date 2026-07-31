@@ -1,3 +1,4 @@
+# List all user facing flows
 Give me all the user facing flows of this system in text, not as a sequence diagram.
 ```
 1. Flow 1 Name
@@ -9,6 +10,7 @@ etc.
 
 ---
 
+# Explain a flow
 Explain a flow. Go through each class involved in the flow, explaining the functions involved and the intention behind each one. Focus on the why. All the leaf classes of a class must be explained before explaining that class. Skip classes that have already been explained. Use simple words. Follow this format:
 
 ```
