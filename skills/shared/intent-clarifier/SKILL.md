@@ -48,7 +48,7 @@ Separate the questions by part of the Intent Document. Present as a numbered lis
 After receiving answers, produce a **draft Intent Document** using the format below. Be explicit: "Here's what I understand — is this right?"
 
 - Fill in what is known confidently
-- Mark uncertain parts with `[?]`  or "I'm not sure about..."
+- Mark uncertain parts with `[?]` or "I'm not sure about..."
 - Propose a best guess for gaps rather than leaving them blank
 
 ### Phase 3 — Test Round
