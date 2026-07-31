@@ -52,7 +52,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Formatting
 - Follow Microsoft C# conventions: PascalCase for classes and methods, camelCase for variables and parameters.
 - Prefix all private fields with an underscore (e.g., `_health`, `_spawnCount`).
-- Names must unambiguously convey purpose. Reject vague names like `Manager`, `Helper`, `Handler`, or `Data` standing alone.
+- Names must unambiguously convey purpose. Reject vague names like `Manager`, `Helper`, `Handler`, `Data`, etc. standing alone.
 - Any variable representing a measurable quantity must include its unit. This applies to time (`timeoutSeconds`, `delayMilliseconds`), distance (`rangeMeters`, `offsetPixels`), angles (`rotationDegrees`, `fovRadians`), speed (`moveSpeedMetersPerSecond`), weight (`massKilograms`), and percentages (`healthPercent`, `spawnChance01` for 0–1 normalized values). A bare `range`, `rotation`, or `speed` is wrong.
 - Name booleans to read as true/false assertions (e.g., `isVisible`, `hasCompleted`, `canAttack`).
 - Write all constants in ALL_CAPS with underscores (e.g., `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT_SECONDS`).
@@ -62,6 +62,9 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
   - `private void PunishPlayerWhenCaught()` is correct for an event handler method name.
   - `public event Action OnPlayerCaught` is a correct name for an event. Add "On" prefix to event names to distinguish them from methods.
 - Use regions to separate public methods from private methods. Order methods by call order — caller before callee — so the file reads top-to-bottom like a story. Public region first, then private. Within each region, order methods by call hierarchy.
+
+## Organization
+- Group scripts by clear responsibility. Avoid generic folder names such as `Core`, `Runtime`, `Common`, etc. Keep folders easy to scan; when one grows large or contains distinct responsibilities, divide it into descriptive sub-responsibility folders. Do not split solely to meet a file-count limit.
 
 ---
 

@@ -32,83 +32,12 @@ Bias toward cleaning the design, not just accepting working code.
 
 ## Core Review Dimensions
 
-Review the code across all these dimensions aggressively. MUST find and call out violations in all of these areas. Do not give a pass on any of them.:
+Before conducting the code review, read and apply all coding guidelines defined in: `%USERPROFILE%\.codex\AGENTS.md`
 
-### 1. Single Source of Truth (SSOT)
-Duplicated state multiplies bugs.
-
-Look for (not exhaustive):
-- **Duplicated state**: the same data stored/derived in multiple places
-- **Derived values recomputed**: values that could be derived but are instead cached manually and kept "in sync"
-- **Mirrored config**: constants or config values copied across files instead of imported from one place
-- **Parallel data structures**: two lists/maps that must stay in sync to represent the same concept
-- **Copy-paste logic**: identical or near-identical functions that should be one
-
-When found, name the specific locations and explain exactly what state is duplicated.
-
----
-
-### 2. Extensibility
-Good architecture lets you add features without rewriting existing code.
-
-Look for (not exhaustive):
-- **Switch/if-else chains on type**: should usually be polymorphism or a strategy/registry pattern
-- **Hard-coded behavior that will obviously vary**: feature flags, rule sets, handler lists that are baked in
-- **Closed classes**: classes that would need modification (not extension) to support new behavior
-- **Missing plugin points**: areas where a hook, interface, or event would make future changes non-breaking
-
----
-
-### 3. Modularity
-A modular system lets you change or replace one piece without touching others.
-
-Look for (not exhaustive):
-- **God objects/modules**: classes or files that do too many unrelated things (lines > 400).
-- **Boundary violations**: logic that leaks across module boundaries (e.g., business rules in controllers, DB queries in views)
-- **Unclear ownership**: when it's ambiguous which module "owns" a concept
-- **Missing abstraction layers**: direct use of low-level primitives where a domain abstraction should exist
-- **Over-modularization**: the opposite — trivially thin modules that add indirection for no reason
-
-Call out both under-abstraction AND over-engineering. Neither is good.
-
----
-
-### 4. Decoupling
-Tight coupling creates change-resistance and untestable code.
-
-Look for (not exhaustive):
-- **Direct class/module instantiation** inside business logic instead of dependency injection
-- **Cross-layer imports**: e.g., UI importing DB logic, or domain layer importing framework code
-- **Implicit dependencies**: functions that reach into global state or singletons without declaring them
-- **Event-driven violations**: components that call each other directly when they should communicate via events or interfaces
-- **Test-hostile design**: code that can't be unit tested without spinning up databases, APIs, or other services
-
-When found, identify the specific import/call chains causing coupling.
-
----
-
-### 5. Simplicity
-Prefer direct, boring, maintainable code over hacky or magical code.
-
-- Treat brittle, ad-hoc, or "magic" behavior as a code-quality problem.
-- Be skeptical of generic mechanisms that hide simple data-shape assumptions.
-- Flag thin abstractions, identity wrappers, or pass-through helpers that add indirection without buying clarity.
-- **Premature extensibility**: interfaces with one implementation, factories with one product — don't count this as a win.
-- Code that makes a reader hold many moving pieces in their head to understand. If the code is so clever that it requires a mental stack trace to follow, it's too complex.
-
----
-
-### 6. Consistency
-Inconsistent patterns and styles create cognitive load and confusion.
-
-Look for (not exhaustive):
-- **Inconsistent communication patterns**: some components use events, others call directly
-- **Inconsistent data management**: some state is in singletons, some in passed parameters, some in static classes
-- **Inconsistent abstraction levels**: some functions do one thing, others do multiple things at once
-- **Inconsistent naming conventions**: different styles for similar concepts, or the same style used for different concepts
-- **Inconsistent file organization**: similar classes organized differently across the codebase
-
-When found, point out the specific inconsistencies and suggest a unified approach.
+- For each guideline header, spawn a fresh context sub-agent (default to GPT-5.6 Sol High) to review the code against that guideline.
+- All guidelines are equally important. Do not skip any. If a guideline does not apply, explicitly state why.
+- Each sub-agent should produce a report of violations, inconsistencies, risks, and missing requirements following the format specified below.
+- The main agent should then synthesize these reports into a single comprehensive review.
 
 ---
 
@@ -119,7 +48,6 @@ Before critiquing, understand:
 - What is this system supposed to do?
 - What layer of the stack is this (UI, service, data, infra)?
 - What language/framework conventions apply?
-- Is this a prototype or production code? (affects severity of findings)
 
 Gather relevant information about the system, its context, and any existing systems it may interact with.
 
@@ -149,7 +77,7 @@ a mess, say so. If it's mostly sound with a few rough edges, say that instead.
 
 ### Findings
 
-#### 🔴 [Finding Title] — [Dimension: SSOT / Decoupling / Modularity / Extensibility]
+#### 🔴 [Finding Title] — [Dimension: Guideline Header Name]
 **Location**: [file name, line numbers if relevant]
 **Problem**: What's wrong, specifically.
 **Impact**: What will go wrong because of this.

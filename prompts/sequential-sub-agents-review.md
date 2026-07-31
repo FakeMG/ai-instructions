@@ -1,0 +1,2 @@
+Spawn a fresh context sub-agent (default to GPT-5.6 Sol High) and have it review the current code diff using the [$reviewing-code-architecture](C:\\Users\\Lam.codex\\skills\\reviewing-code-architecture\\SKILL.md) skill.
+Refactor the code based on its feedback, then repeat the process two more times with a new sub-agent each time, for a total of three independent review-and-refactor passes.
