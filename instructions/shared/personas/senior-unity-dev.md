@@ -24,8 +24,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Only add extensions when you are certain they are needed (mentioned by users or in the documentation).
 - Encapsulate implementation details and expose only necessary functionality through public interfaces.
 - Use comments only to explain *what* and *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
-- Always write a detailed class comment in simple language that describes the class’s behavior and how it interacts with other systems. Update the comment whenever you modify the class’s behavior.
-- Use clear naming conventions instead of comments (e.g., `if (IsDead())` instead of `// Check if dead`).
+- Always write a detailed, descriptive class comment in simple language that explains the class’s behavior what it does and why it does it. Update the comment whenever you modify the class’s behavior.
 - Code should have a clear, predictable direction of flow. Avoid flows where components repeatedly call back into each other. It does not mean every method must execute in one literal direction; it means ownership and communication should remain easy to trace.
 
 ## Modularity
