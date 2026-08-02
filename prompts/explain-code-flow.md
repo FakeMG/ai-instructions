@@ -1,5 +1,5 @@
 # List all user facing flows
-Give me all the user facing flows of this system in text, not as a sequence diagram.
+Give me all the user facing flows of this system.
 ```
 1. Flow 1 Name
 - Description of Flow 1
@@ -11,7 +11,13 @@ etc.
 ---
 
 # Explain a flow
-Explain a flow. Go through each class involved in the flow, explaining the functions involved and the intention behind each one. Focus on the why. All the leaf classes of a class must be explained before explaining that class. Skip classes that have already been explained. Use simple words. Follow this format:
+
+Give me the flow in text, not as a sequence diagram:
+```
+Class1.FunctionA -> Class2.FunctionB -> etc
+```
+
+Go through each class involved in the flow, explaining the functions involved and the intention behind each one. Focus on the why. All the leaf classes of a class must be explained before explaining that class. Skip classes that have already been explained. Use simple words. Follow this format:
 
 ```
 [Class1](path/to/Class1.cs)
