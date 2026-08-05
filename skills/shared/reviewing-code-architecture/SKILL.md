@@ -1,13 +1,8 @@
 ---
 name: reviewing-code-architecture
 description: >
-  Use this skill whenever the user wants architectural feedback on their code, codebase, or system design.
-  Trigger on phrases like: "review my code", "check my architecture", "is this good design?", "how's my
-  project structured?", "refactor advice", "is this scalable?", "review my repo", "look at my codebase",
-  or any time the user shares code files and wants more than a bug fix — they want structural critique.
-  Also trigger when users ask about coupling, cohesion, modularity, extensibility, single source of truth,
-  separation of concerns, or dependency management. Do NOT trigger for pure bug fixes or narrow "make this
-  function work" requests.
+  This skill is for reviewing the *architecture* of a system, not just the code.
+  Only trigger when the user is explicitly requesting this skill. Otherwise, don't use it.
 ---
 
 # Code Architecture Review Skill
@@ -34,14 +29,15 @@ Bias toward cleaning the design, not just accepting working code.
 
 Before conducting the code review, read and apply all coding guidelines defined in: `%USERPROFILE%\.codex\AGENTS.md`
 
-- For each guideline header, spawn a fresh context sub-agent (default to GPT-5.6 Sol High) to review the code against that guideline.
-- All guidelines are equally important. Do not skip any. If a guideline does not apply, explicitly state why.
+- For each coding guideline header, spawn a fresh context sub-agent (default to GPT-5.6 Sol High) to review the code against that guideline.
+- All coding guidelines are equally important. Do not skip any. If a guideline does not apply, explicitly state why.
 - Each sub-agent should produce a report of violations, inconsistencies, risks, and missing requirements following the format specified below.
-- The main agent should then synthesize these reports into a single comprehensive review.
+
+The main agent should then synthesize these reports into a single comprehensive review. DO NOT skip any sub-agent report. If a sub-agent finds no issues, explicitly state that in the synthesis.
 
 ---
 
-## How to Conduct the Review
+## How to Conduct the Review (Send this to the sub-agent)
 
 ### Step 1: Understand the context
 Before critiquing, understand:
@@ -67,37 +63,27 @@ Do not flood the review with low-value nits if there are larger structural issue
 
 Use this format:
 
----
+```
+# Architecture Review: [file/module name or system name]
 
-## Architecture Review: [file/module name or system name]
-
-### Summary
+## Summary
 One short paragraph: what the code is doing overall and your overall assessment. Be honest — if it's
 a mess, say so. If it's mostly sound with a few rough edges, say that instead.
 
-### Findings
+## Findings
 
-#### 🔴 [Finding Title] — [Dimension: Guideline Header Name]
+### Coding Guideline Name 1 (e.g., "Extensible", "Simplicity", etc.)
+
+#### 🔴 [Finding Title]
 **Location**: [file name, line numbers if relevant]
 **Problem**: What's wrong, specifically.
 **Impact**: What will go wrong because of this.
 **Fix**: Concrete recommendation. Show a code sketch if it would make the fix clearer.
 
-[Repeat for each finding, in severity order]
+[Repeat for each guideline, in severity order]
 
-### What's Working
-Call out 2–3 things that are genuinely well-designed. Don't invent praise — if nothing stands out, skip
-this section or say so. Fake positives undermine trust in the real critique.
+### Coding Guideline Name N
 
-### Recommended Priority Order
+## Recommended Priority Order
 Ordered list of what to fix first, given likely impact vs. effort.
-
----
-
-## When Code Is Shared in Chunks
-
-If the user shares code in multiple messages, hold your full assessment until you've seen everything
-they intend to show. Acknowledge receipt and wait. When they signal they're done, then run the full review.
-
-If you can only see part of a system, be explicit about what you *can't* assess due to missing context.
-Don't pretend you've reviewed the architecture when you've only seen one file.
+```
