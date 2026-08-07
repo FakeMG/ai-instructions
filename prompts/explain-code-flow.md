@@ -1,3 +1,18 @@
+# List all features of the system
+I have no knowledge about how this system works. List all the features the system has. What problems does each feature solve?
+
+Prefer explanations that are:
+- Beginner-friendly, assuming no prior knowledge.
+- Plain-language first, technical terms second.
+- Focused on one class or concept at a time.
+- Clear about each component’s responsibility.
+- Explicit about differences between similar concepts.
+- Shown as short execution flows.
+- Grounded in practical examples.
+- Supported by small, realistic code snippets when useful.
+- Clear about what a system does not do.
+- Concise, without unnecessary architecture jargon.
+
 # List all user facing flows
 Give me all the user facing flows of this system.
 ```
