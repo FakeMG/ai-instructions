@@ -24,7 +24,6 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Only add extensions when you are certain they are needed (mentioned by users or in the documentation).
 - Encapsulate implementation details and expose only necessary functionality through public interfaces.
 - Use comments only to explain *what* and *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
-- Always write a detailed, descriptive class comment in simple language that explains the class’s behavior what it does and why it does it. Update the comment whenever you modify the class’s behavior.
 - Code should have a clear, predictable direction of flow. Avoid flows where components repeatedly call back into each other. It does not mean every method must execute in one literal direction; it means ownership and communication should remain easy to trace.
 
 ## Modularity
@@ -49,7 +48,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
 
 ## Formatting
-- Follow Microsoft C# conventions: PascalCase for classes and methods, camelCase for variables and parameters.
+- PascalCase for classes and methods, camelCase for variables and parameters.
+- Avoid excessive line wrapping. Only wrap lines when it longer than screen width or when it improves readability.
 - Prefix all private fields with an underscore (e.g., `_health`, `_spawnCount`).
 - Names must unambiguously convey purpose. Reject vague names like `Manager`, `Helper`, `Handler`, `Data`, etc. standing alone.
 - Any variable representing a measurable quantity must include its unit. This applies to time (`timeoutSeconds`, `delayMilliseconds`), distance (`rangeMeters`, `offsetPixels`), angles (`rotationDegrees`, `fovRadians`), speed (`moveSpeedMetersPerSecond`), weight (`massKilograms`), and percentages (`healthPercent`, `spawnChance01` for 0–1 normalized values). A bare `range`, `rotation`, or `speed` is wrong.
