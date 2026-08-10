@@ -7,21 +7,22 @@ Prefer explanations that are:
 - Focused on one class or concept at a time.
 - Clear about each component’s responsibility.
 - Explicit about differences between similar concepts.
-- Shown as short execution flows.
 - Grounded in practical examples.
 - Supported by small, realistic code snippets when useful.
 - Clear about what a system does not do.
 - Concise, without unnecessary architecture jargon.
 
-# List all user facing flows
-Give me all the user facing flows of this system.
+# List all main flows
+Give me all the main flows of this feature in text, not as a sequence diagram. Don't dump the entire codebase. Focus on the main flows that are critical to the feature's functionality. Use this format:
 ```
-1. Flow 1 Name
-- Description of Flow 1
-2. Flow 2 Name
-- Description of Flow 2
-etc.
+Class1.FunctionA -> Class2.FunctionB -> etc
 ```
+
+# Explain a class
+Explain the class in detail, including its purpose, responsibilities. Use simple words and focus on the why behind each decision.
+All the leaf classes of a class must be explained before explaining that class. Skip classes that have already been explained.
+- Leaf class: classes that you can understand without reading other classes.
+- Non-leaf class: data classes and classes that are outside of the system.
 
 ---
 
