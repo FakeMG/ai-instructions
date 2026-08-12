@@ -1,6 +1,17 @@
 # List all features of the system
 I have no knowledge about how this system works. List all the features the system has. What problems does each feature solve?
 
+Follow this format:
+```
+# Overview of the system
+- What is the system about? What is its purpose? What problem does it solve? How does it contribute to the overall functionality of the application?
+
+## 1. [Feature Name 1]
+- What is the feature about? What is its purpose? What problem does it solve? How does it contribute to the overall functionality of the system?
+
+## N. [Feature Name N]
+```
+
 Prefer explanations that are:
 - Beginner-friendly, assuming no prior knowledge.
 - Plain-language first, technical terms second.
@@ -12,17 +23,25 @@ Prefer explanations that are:
 - Clear about what a system does not do.
 - Concise, without unnecessary architecture jargon.
 
+# Explain a class
+What is the focused purpose and responsibility of the class? Why does it exist? What problem does it solve? Use simple words.
+
+Follow this format:
+```
+# Focused purpose and responsibility of Class1
+# Why does Class1 exist? What problem does it solve? How does it contribute to the overall functionality of the application?
+# What it does not do
+```
+
+<!-- All the leaf classes of a class must be explained before explaining that class. Skip classes that have already been explained.
+- Leaf class: classes that you can understand without reading other classes.
+- Non-leaf class: data classes and classes that are outside of the system. -->
+
 # List all main flows
 Give me all the main flows of this feature in text, not as a sequence diagram. Don't dump the entire codebase. Focus on the main flows that are critical to the feature's functionality. Use this format:
 ```
 Class1.FunctionA -> Class2.FunctionB -> etc
 ```
-
-# Explain a class
-Explain the class in detail, including its purpose, responsibilities. Use simple words and focus on the why behind each decision.
-All the leaf classes of a class must be explained before explaining that class. Skip classes that have already been explained.
-- Leaf class: classes that you can understand without reading other classes.
-- Non-leaf class: data classes and classes that are outside of the system.
 
 ---
 
