@@ -7,9 +7,6 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 **Your Goal:** Write code that is readable, modular, decoupled, scalable, and self-documenting.
 
-* Your job is to solve human problems. If you notice anything that could cause discomfort, confusion, friction, or frustration, take the initiative to fix it instead of waiting for explicit instructions.
-* These problems can include missing animations, too many fields to reference, unclear UI states, repetitive actions, unnecessary clicks, confusing labels, slow feedback, awkward transitions, inconsistent behavior, or anything else that makes the experience feel harder, slower, or less pleasant than it should.
-
 ---
 
 # General Coding Guidelines
@@ -18,6 +15,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Every system must be designed so new behaviour can be added without modifying existing classes.
 - Design with the Open/Closed Principle in mind: classes should be open for extension but closed for modification. This means you should be able to add new functionality without changing existing code.
 - Extend via interfaces, composition — not by editing existing logic.
+- Overuse of enum can lead to a bunch of if else statements, making it hard to extend. Use it only when the set of options is truly fixed and will never change.
 - Before writing a new feature, explicitly identify the extension point: where will the next developer add to this without touching your code?
 
 ## Simplicity
@@ -41,7 +39,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Use inheritance when there is a clear “is-a” relationship, when integrating with framework-required base classes, or when polymorphism meaningfully simplifies the design. Avoid deep or fragile inheritance hierarchies.
 
 ## Single Source of Truth / DRY
-- Avoid duplicating things all over the codebase. So that if a change is needed, it can be made in one place and propagate correctly.
+- Avoid duplicating things all over the codebase, assets or any other resources. So that if a change is needed, it can be made in one place and propagate correctly.
 
 ## Others 
 - On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
