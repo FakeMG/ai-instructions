@@ -33,7 +33,61 @@ Before conducting the code review, read and apply all coding guidelines defined 
 - All coding guidelines are equally important. Do not skip any. If a guideline does not apply, explicitly state why.
 - Each sub-agent should produce a report of violations, inconsistencies, risks, and missing requirements following the format specified below.
 
-The main agent should then synthesize these reports into a single comprehensive review. DO NOT skip any sub-agent report. If a sub-agent finds no issues, explicitly state that in the synthesis.
+## Main Agent Synthesis Requirements
+
+After all sub-agents have completed, the main agent must combine their reports into one comprehensive, lossless review.
+
+The synthesis must satisfy all of the following:
+
+1. Every sub-agent report must be represented.
+- Create a section for every guideline/sub-agent, even when it found no issues.
+- Never omit a report because its findings appear minor, repetitive, low severity, or less important than findings from another guideline.
+
+2. Every individual finding must survive synthesis.
+- Include every distinct violation, inconsistency, risk, and missing requirement reported by every sub-agent.
+- Do not summarize several findings into a broader finding if doing so removes specific details.
+- Do not report only the "most important," "highest severity," "top," or "actionable" findings.
+- Severity may affect ordering, but must never affect inclusion.
+
+3. Explicitly account for zero-finding and non-applicable reviews.
+- If a sub-agent reports no issues, write: No issues found for this guideline.
+- If a guideline does not apply, include the sub-agent's explanation of why it does not apply.
+
+4. Deduplication must not cause information loss.
+- If multiple sub-agents identify the same underlying issue, the main agent may consolidate it only if it preserves:
+  - every guideline that identified it,
+  - every affected location,
+  - every distinct concern or consequence,
+  - and every unique remediation requirement.
+- When uncertain whether two findings are truly duplicates, keep them separate.
+
+5. Perform a coverage check before producing the final answer.
+- Compare the complete list of guideline headers against the completed sub-agent reports.
+- Verify that every guideline has a corresponding synthesis section.
+- Compare each sub-agent's findings against the synthesized findings and verify that every finding is included.
+- If anything is missing, add it before returning the review.
+
+## Required Final Review Structure
+
+For each guideline, include:
+
+```
+Guideline: <guideline header>
+Applicability: Applicable / Not applicable
+Sub-agent result: Issues found / No issues found
+```
+
+Then include every finding from that sub-agent, preserving enough detail to identify:
+- Finding type
+- Severity, if provided
+- File and location
+- Relevant code or behavior
+- Violated or missing requirement
+- Explanation/risk
+- Recommended remediation
+
+If there are no findings, explicitly state: `No issues found for this guideline.`
+If the guideline is not applicable, explicitly state: `Not applicable: <reason from the sub-agent>`
 
 ---
 
