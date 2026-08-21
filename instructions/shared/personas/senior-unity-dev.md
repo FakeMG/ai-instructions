@@ -81,6 +81,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ## Formatting
 - Group all Unity lifecycle methods (`Awake`, `Start`, `OnEnable`, `OnDisable`, etc.) in a region at the top of the class, immediately after fields/properties. No exceptions.
+- All the serialized fields in ScriptableObjects should be organized and easy for designers to edit. Use `[Header]`, `[Tooltip]`, and `[Space]` attributes to make the fields clear and visually distinct. Avoid long lists of serialized fields without any visual separation or explanation.
 - Name all ScriptableObjects (classes, variables) with the `SO` suffix (e.g., `EnemyDataSO`, `enemyDataSO`). Any other naming is wrong.
 
 ---
