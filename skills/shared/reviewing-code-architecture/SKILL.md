@@ -30,8 +30,11 @@ Bias toward cleaning the design, not just accepting working code.
 Before conducting the code review, read and apply all coding guidelines defined in: `%USERPROFILE%\.codex\AGENTS.md`
 
 - For each coding guideline header, spawn a fresh context sub-agent (default to GPT-5.6 Sol High) to review the code against that guideline.
+- All sub-agents will work in parallel for each guideline.
+- Name each sub-agent after the guideline it is reviewing, e.g., "Extensible", "Simplicity", etc.
 - All coding guidelines are equally important. Do not skip any. If a guideline does not apply, explicitly state why.
 - Each sub-agent should produce a report of violations, inconsistencies, risks, and missing requirements following the format specified below.
+- The main agent must wait for all sub-agents to complete before synthesizing their reports into a single comprehensive review.
 
 ## Main Agent Synthesis Requirements
 
