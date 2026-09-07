@@ -40,6 +40,8 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ## Single Source of Truth / DRY
 - Avoid duplicating things all over the codebase, assets or any other resources. So that if a change is needed, it can be made in one place and propagate correctly.
+- Examples that might be ignored because they don't look like duplication:
+  - Hardcoded paths: the same information exists in at least two places—the actual file path and a hardcoded string in code. If the path is renamed or moved, the string must be updated manually, which is error-prone and violates DRY.
 
 ## Others 
 - On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
