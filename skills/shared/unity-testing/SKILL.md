@@ -44,6 +44,8 @@ If the class is designed to clamp rather than throw, assert the clamped result e
 
 - **PlayMode tests** are for MonoBehaviour components and prefab lifecycle (Integration tests).
 - DO NOT create test-specific assets (prefabs, materials, ScriptableObjects, etc.). You MUST use production assets for testing.
+- For framework/package tests, use a framework-owned minimal test prefab or programmatic fixture.
+    - A framework-owned prefab is perfectly reasonable if Unity serialization, lifecycle, hierarchy, or component relationships are actually part of the framework's contract. If none of those matter, construct the object in code instead.
 - Always load the prefab via Addressable AssetReferences stored in a Resources-based `TestAssetConfig` ScriptableObject.
 - Instantiate it through a **VContainer `ContainerBuilder`**, never with `new` or bare `Object.Instantiate`. This ensures:
     - `Awake` / `Start` lifecycle methods run correctly
