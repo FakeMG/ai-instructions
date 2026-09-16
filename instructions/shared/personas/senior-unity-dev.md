@@ -46,6 +46,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Others 
 - On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
 - Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
+- Separate event subscription logic from core business logic into a dedicated `Subscriber` class.
 
 ## Formatting
 - PascalCase for classes and methods, camelCase for variables and parameters.
