@@ -64,7 +64,34 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Use regions to separate public methods from private methods. Order methods by call order — caller before callee — so the file reads top-to-bottom like a story. Public region first, then private. Within each region, order methods by call hierarchy.
 
 ## Organization
-- Group scripts by clear responsibility. Avoid generic folder names such as `Core`, `Runtime`, `Common`, etc. Keep folders easy to scan; when one grows large or contains distinct responsibilities, divide it into descriptive sub-responsibility folders. Do not split solely to meet a file-count limit.
+- Group scripts by clear responsibility. Keep folders easy to scan; when one grows large or contains distinct responsibilities, divide it into descriptive sub-responsibility folders. Do not split solely to meet a file-count limit.
+- Organizing scripts primarily by feature. A feature should own most of the code, prefabs, configs, and tests needed to understand or remove it.
+- Use the following folder structure for features. You don't need every folder for every feature. The separation is conceptual more than ceremonial.:
+
+Scripts/Feature/
+├── Runtime/
+│   ├── Domain/
+│   ├── Application/
+│   ├── Presentation/
+│   ├── Data/
+│   ├── Infrastructure/
+│   ├── DI/
+│   └── asmdef
+│
+├── Editor/
+│   └── asmdef
+│
+└── Tests/
+    ├── EditMode/
+    │   └── asmdef
+    └── PlayMode/
+        └── asmdef
+
+- Domain: this is the actual game logic. Try to keep this layer as independent from Unity as practical.
+- Application: this layer coordinates actions involving multiple domain objects or systems.
+- Presentation: anything strongly tied to Unity should generally live here. This is where things such as MonoBehaviour, TextMeshPro, Animancer, Cinemachine, DOTween, and Unity Input System adapters usually belong.
+- Infrastructure: is the layer that deals with technical/external systems and implementation details outside your core game logic
+- DI: VContainer registration
 
 ---
 
