@@ -26,7 +26,7 @@ If the class is designed to clamp rather than throw, assert the clamped result e
 - Only test public methods — they represent the class's contract and are what consumers depend on.
 - DO NOT test private or internal methods directly — if a private method feels like it needs its own test, STOP. It likely belongs in a separate class.
 - DO NOT change the value of private or internal fields — if you need it to reach into a class, STOP. The design needs to change instead.
-- If the code structure is too hard to test, STOP and notify the user that the design needs to change. Don't try to force a test on 
+- If the code structure is too hard to test, STOP and notify the user that the design needs to change. Don't try to force a test onto a design that doesn't support it.
 - Avoid complex logic in tests: If your test contains if statements or complex loops, you probably need a test for your test. Keep them dead simple.
 - Use dependency injection to provide mocked implementations of dependencies, so tests can isolate the unit under test and assert on interactions.
 - Mock external systems (audio, scoring, persistence, time) to verify your code talks to them correctly without relying on their real behavior.
@@ -37,20 +37,23 @@ If the class is designed to clamp rather than throw, assert the clamped result e
 
 ## EditMode Test Guidelines
 
-- **EditMode tests** are for pure C# logic, unit tests, no prefabs, no MonoBehaviour.
+- EditMode tests are for pure C# logic, unit tests, no prefabs, no MonoBehaviour.
 - DO NOT test MonoBehaviour components in EditMode.
 
 ## PlayMode Test Guidelines
 
-- **PlayMode tests** are for MonoBehaviour components and prefab lifecycle (Integration tests).
-- DO NOT create test-specific assets (prefabs, materials, ScriptableObjects, etc.). You MUST use production assets for testing.
-- For framework/package tests, use a framework-owned minimal test prefab or programmatic fixture.
-    - A framework-owned prefab is perfectly reasonable if Unity serialization, lifecycle, hierarchy, or component relationships are actually part of the framework's contract. If none of those matter, construct the object in code instead.
-- Always load the prefab via Addressable AssetReferences stored in a Resources-based `TestAssetConfig` ScriptableObject.
+- PlayMode tests are for MonoBehaviour components and prefab lifecycle (Integration tests).
+- For project's integration tests, always load the production prefabs via Addressable AssetReferences stored in a Resources-based `TestAssetConfig` ScriptableObject.
+- The project's integration tests should be under a shared `Tests` folder, not under a specific feature folder.
 - Instantiate it through a **VContainer `ContainerBuilder`**, never with `new` or bare `Object.Instantiate`. This ensures:
     - `Awake` / `Start` lifecycle methods run correctly
     - Serialized fields are wired up
     - All injected dependencies are provided (either real or mocked)
+- For an individual system, do not load the real game prefab or the full game scene. Build the smallest runtime environment the system needs and test only its Unity-facing behavior.
+- Prefer constructing test objects in code. Use a test prefab only when Unity serialization, lifecycle, hierarchy, or component relationships are part of the framework's contract.
+- When using test prefabs, keep them minimal rather than mirroring production prefabs.
+- For PlayMode tests that only run in the Editor, loading test prefabs through `AssetDatabase` is reasonable.
+- Test prefabs should not be marked as Addressables, so they are not included in the final build.
 - Avoid sharing container instances across tests. Always build a fresh container per test
 - Avoid resolving from the scene-level `LifetimeScope` during a test — it makes the test fragile and order-dependent
 - Always clean up instantiated GameObjects to prevent test pollution. VContainer's `Dispose()` destroys GameObjects it instantiated when the container is disposed.:
@@ -69,7 +72,7 @@ public void TearDown()
 
 If the prefab for the component under test does not exist yet:
 
-1. Use the `unity-mcp-orchestrator` skill to extract prefab from scene or create a production prefab containing only the component under test, saved to `Assets/<Feature>/Prefabs/<ComponentName>.prefab`.
+1. Use the `unity-mcp-orchestrator` skill to extract prefab from scene or create a prefab containing only the component under test, saved to `Assets/<Feature>/Prefabs/<ComponentName>.prefab`.
 2. If the component has dependencies, DO NOT add live implementations to the prefab, inject mocks instead.
 3. Load the created prefab using Addressables.
 4. If the test is PlayMode and the prefab needs to be marked as an Addressable: attempt to mark it via UnityMCP. If that isn't possible, tell the user which asset to mark.
