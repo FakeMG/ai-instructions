@@ -43,6 +43,8 @@ Do not add or use a different library as a substitute for one listed here. If a 
 - Check whether FakeMGFramework already provides the required functionality before creating a new core utility or system.
 - Use `FakeMG.Framework.Echo` for project logging.
 - Use `DatabaseSO<T>` for catalogs containing one `IdentitySO`-derived type. Example: `ItemDatabaseSO : DatabaseSO<ItemSO>`.
+- Use `ActionMapManager` to enable and disable action maps. All actions under an action map should be toggled together.
+- Use `VersionMigrator` to handle version migration of save data.
 - Derive ScriptableObject definitions from `IdentitySO` when they require a stable, unique ID for catalog lookup or save data.
   - Examples: items, entities, structures, recipes, categories, and equipment.
 - Every component implementing `ISaveable` must:
