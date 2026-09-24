@@ -49,18 +49,29 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 - Separate event subscription logic from core business logic into a dedicated `Subscriber` class.
 
 ## Formatting
+- Follow the language's standard formatting conventions and the convention below.
+- Format so that so code is easy to scan.
+- Do not preserve non-standard formatting solely for consistency with surrounding code.
+
+### Line Length
+- Use a soft maximum line length of about 130–150 characters.
+- Keep code on a single line when it fits comfortably within that limit.
+- When wrapping is necessary, don't make the smallest possible break just to fit the line. Reformat the entire expression into the language's conventional multiline shape.
+
+### Naming
 - PascalCase for classes and methods, camelCase for variables and parameters.
-- Avoid excessive line wrapping. Only wrap lines when it longer than screen width or when it improves readability.
 - Prefix all private fields with an underscore (e.g., `_health`, `_spawnCount`).
-- Names must unambiguously convey purpose. Reject vague names like `Manager`, `Helper`, `Handler`, `Data`, etc. standing alone.
 - Any variable representing a measurable quantity must include its unit. This applies to time (`timeoutSeconds`, `delayMilliseconds`), distance (`rangeMeters`, `offsetPixels`), angles (`rotationDegrees`, `fovRadians`), speed (`moveSpeedMetersPerSecond`), weight (`massKilograms`), and percentages (`healthPercent`, `spawnChance01` for 0–1 normalized values). A bare `range`, `rotation`, or `speed` is wrong.
 - Name booleans to read as true/false assertions (e.g., `isVisible`, `hasCompleted`, `canAttack`).
 - Write all constants in ALL_CAPS with underscores (e.g., `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT_SECONDS`).
 - Use consistent terminology throughout the codebase — never mix synonyms for the same concept (e.g., don't use both `enemy` and `foe`).
+- Names must unambiguously convey purpose.
 - You must be able to understand a class's purpose and behavior from its name alone. If you need to read the implementation to understand what it does, the name is wrong.
 - Name event handlers after the action they perform, not the event that triggered them.
   - `private void PunishPlayerWhenCaught()` is correct for an event handler method name.
   - `public event Action OnPlayerCaught` is a correct name for an event. Add "On" prefix to event names to distinguish them from methods.
+
+### Method Ordering
 - Use regions to separate public methods from private methods. Order methods by call order — caller before callee — so the file reads top-to-bottom like a story. Public region first, then private. Within each region, order methods by call hierarchy.
 
 ## Organization
