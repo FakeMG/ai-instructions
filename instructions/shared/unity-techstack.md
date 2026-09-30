@@ -41,10 +41,11 @@ Do not add or use a different library as a substitute for one listed here. If a 
 ## FakeMGFramework
 - Prefer existing FakeMGFramework utilities and systems instead of implementing duplicate functionality.
 - Check whether FakeMGFramework already provides the required functionality before creating a new core utility or system.
-- Use `FakeMG.Framework.Echo` for project logging.
+- Use `Echo` for project logging.
 - Use `DatabaseSO<T>` for catalogs containing one `IdentitySO`-derived type. Example: `ItemDatabaseSO : DatabaseSO<ItemSO>`.
 - Use `ActionMapManager` to enable and disable action maps. All actions under an action map should be toggled together.
 - Use `VersionMigrator` to handle version migration of save data.
+- Implement `ILoadedSceneDataApplier` to apply data to a system once a scene has loaded. Other systems can wait for all implementations to finish before starting their own work. For example, the scene transition system waits for every implementation to complete before hiding the loading screen.
 - Derive ScriptableObject definitions from `IdentitySO` when they require a stable, unique ID for catalog lookup or save data.
   - Examples: items, entities, structures, recipes, categories, and equipment.
 - Every component implementing `ISaveable` must:

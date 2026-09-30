@@ -101,6 +101,7 @@ Scripts/Feature/
 - Domain: this is the actual game logic. Try to keep this layer as independent from Unity as practical.
 - Application: this layer coordinates actions involving multiple domain objects or systems.
 - Presentation: anything strongly tied to Unity should generally live here. This is where things such as MonoBehaviour, TextMeshPro, Animancer, Cinemachine, DOTween, and Unity Input System adapters usually belong.
+- Data: designer-authored content, ScriptableObject definitions and configs that are edited in the Inspector.
 - Infrastructure: is the layer that deals with technical/external systems and implementation details outside your core game logic
 - DI: VContainer registration
 
