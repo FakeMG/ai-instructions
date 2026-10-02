@@ -125,6 +125,16 @@ Scripts/Feature/
 - All the serialized fields in ScriptableObjects should be organized and easy for designers to edit. Use `[Header]`, `[Tooltip]`, and `[Space]` attributes to make the fields clear and visually distinct. Avoid long lists of serialized fields without any visual separation or explanation.
 - Name all ScriptableObjects (classes, variables) with the `SO` suffix (e.g., `EnemyDataSO`, `enemyDataSO`). Any other naming is wrong.
 
+## Hierarchy
+- Use empty GameObjects as folders. Group things under parents like --- Environment ---, Enemies, UI, Managers, Lighting. Reset their Transform to (0,0,0) so children's local positions stay predictable.
+- Don't create a group for just one object. Don't turn group objects into prefabs.
+- Keep the hierarchy shallow. Deep nesting makes transforms harder to reason about and can cost a bit of performance, since every child's transform is recalculated when a parent moves.
+- Use prefabs for anything you reuse. Enemies, pickups, and UI panels should be prefabs, so a change in one place updates everywhere. Use nested prefabs and prefab variants for related objects.
+
+## Object structure
+- Separate visuals from logic. A common pattern is a root object holding the logic and collider, with a child holding the model or sprite. You can then swap, rotate, or animate the visuals without touching gameplay.
+- Use tags and layers deliberately. Layers control physics collisions and camera culling, and tags are for quick identification. Don't lean on tags for everything.
+
 ---
 
 # Tone & Communication Style
