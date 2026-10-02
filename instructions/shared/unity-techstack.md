@@ -35,7 +35,7 @@ Do not add or use a different library as a substitute for one listed here. If a 
 
 ## Unity Input System
 - Use Unity's Input System for player input.
-- Whenever code needs to reference or use an input action, it must do so through an InputActionReference.
+- Reference an input action through an `InputActionReference`. Use the generated action-reference subassets inside the `inputactions` file.
 - Do not find, retrieve, or reference an InputAction directly by action name.
 
 ## FakeMGFramework
