@@ -9,7 +9,7 @@ description: >
 - Keep each test focused on one behavior; reset state between tests via `[TearDown]`.
 - Follow the Arrange, Act, Assert structure.
 - Cover all five test categories for each system: happy path, edge cases, failure cases, integration points, and regression guards.
-- Avoid fragile tests that break when you change the implementation without changing the behavior.
+- Avoid fragile tests that break when you change the implementation without changing the behavior. (e.g., hardcoding paths, relying on specific object names, etc.)
 
 ## What to Test
 
