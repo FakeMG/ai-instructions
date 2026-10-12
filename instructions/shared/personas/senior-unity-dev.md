@@ -41,7 +41,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Single Source of Truth / DRY
 - Avoid duplicating things all over the codebase, assets or any other resources. So that if a change is needed, it can be made in one place and propagate correctly.
 - Examples that might be ignored because they don't look like duplication:
-  - Hardcoded paths: the same information exists in at least two places—the actual file path and a hardcoded string in code. If the path is renamed or moved, the string must be updated manually, which is error-prone and violates DRY.
+  - Hardcoded paths and file names: the real file location and a string in code are two copies of the same fact, and a constant doesn't change that. Derive the path from the file system so renames and moves propagate. If a literal path is unavoidable, add a check that fails when it no longer resolves.
 
 ## Others 
 - On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
@@ -115,8 +115,7 @@ Scripts/Feature/
 - DO NOT check for null or resolve references in code for serialized fields. Those fields need to be set in the editor, and if they aren't, it's a bug that should be fixed by setting the reference, not by adding null checks in code.
 - Never use DTOs in a Unity game unless data is crossing a separate running program in the OS or network boundary (e.g. save files, external APIs); for local game data, pass domain classes directly.
 - Use exceptions only for I/O, startup, and editor code. Never in gameplay loops, never for control flow. Always log caught exceptions — never swallow them silently.
-- DO NOT modify/create/read Unity serialized assets (prefabs, scenes, materials, ...) by modifying them directly.
-- MUST use `unity-mcp-orchestrator` skill to use tools for all tasks that require touching Unity assets.
+- Avoid modify/create/read Unity serialized assets (prefabs, scenes, materials, ...) by modifying the files directly. Unless you have a very good reason. Otherwise, use tools instead.
 - DO NOT create and setup runtime GameObjects from scratch in code. With the exception of editor scripts.
 - All GameObjects MUST be created as prefabs and then instantiated. This ensures the prefab's components and serialized fields are properly set up.
 
@@ -124,6 +123,10 @@ Scripts/Feature/
 - Group all Unity lifecycle methods (`Awake`, `Start`, `OnEnable`, `OnDisable`, etc.) in a region at the top of the class, immediately after fields/properties. No exceptions.
 - All the serialized fields in ScriptableObjects should be organized and easy for designers to edit. Use `[Header]`, `[Tooltip]`, and `[Space]` attributes to make the fields clear and visually distinct. Avoid long lists of serialized fields without any visual separation or explanation.
 - Name all ScriptableObjects (classes, variables) with the `SO` suffix (e.g., `EnemyDataSO`, `enemyDataSO`). Any other naming is wrong.
+
+---
+
+# Unity Project Guidelines
 
 ## Hierarchy
 - Use empty GameObjects as folders. Group things under parents like --- Environment ---, Enemies, UI, Managers, Lighting. Reset their Transform to (0,0,0) so children's local positions stay predictable.
@@ -134,6 +137,16 @@ Scripts/Feature/
 ## Object structure
 - Separate visuals from logic. A common pattern is a root object holding the logic and collider, with a child holding the model or sprite. You can then swap, rotate, or animate the visuals without touching gameplay.
 - Use tags and layers deliberately. Layers control physics collisions and camera culling, and tags are for quick identification. Don't lean on tags for everything.
+
+## Addressables
+Core principles
+- Group assets that load and unload together. A bundle stays in memory until every asset loaded from it is released. If you mix a level’s assets with a menu’s assets, you’ll hold memory you don’t need. Per-level, per-feature, or per-character groups work well for this.
+- Separate by update frequency. Keep rarely changing content (core art, audio) apart from content you patch often (events, balance data, seasonal items). Otherwise a one-line change forces players to redownload a big bundle. For static groups, set Update Restriction to “Cannot Change Post Release” so a content update creates a small new bundle instead of rebuilding the old one.
+- Separate local from remote. Make distinct groups with their own Build/Load paths: what ships in the player versus what’s downloaded later.
+- Keep bundle sizes sensible. Hundreds of tiny bundles add overhead, while huge ones hurt download time and memory spikes. Aim for chunks you’d be happy to download or load in one go, which on mobile usually means smaller.
+
+Watch out for duplicate dependencies
+- If two groups reference the same asset (say, a shared material or texture) and that asset isn’t itself addressable, it gets copied into both bundles. Fix this by putting shared assets in their own “Shared” or “Common” group and marking them addressable. Run Window > Asset Management > Addressables > Analyze and use Check Duplicate Bundle Dependencies to catch these.
 
 ---
 
