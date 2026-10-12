@@ -51,29 +51,30 @@ For every system or component, cover these five categories before calling a test
 - Avoid resolving from the scene-level `LifetimeScope` during a test — it makes the test fragile and order-dependent.
 - Always clean up instantiated GameObjects to prevent test pollution. VContainer's `Dispose()` destroys GameObjects it instantiated when the container is disposed.
 
-### Prefabs
+### Test Assets
 
-- Use different prefab-loading strategies for framework tests and project tests.
-- Prefer constructing test objects in code. Create test prefabs only when Unity serialization, lifecycle, hierarchy, or component relationships are part of the behavior being tested.
+- Use different asset-loading strategies for framework tests and project tests.
+- Avoid loading production assets, because production assets change constantly.
 - Test-only assets must not be referenced by production scenes, prefabs, Resources, or production Addressables assets.
+
+#### Prefabs
+
+- Prefer constructing test objects in code. Create test prefabs only when Unity serialization, lifecycle, hierarchy, or component relationships are part of the behavior being tested.
 - Keep test prefabs minimal.
-- Avoid loading production prefabs, because production prefabs change constantly.
 
 #### Framework Tests
 
-- Framework test prefabs must be Editor-only.
-- Store them under `Editor/Resources`.
+- Framework test assets must be Editor-only. Do not make framework test assets Addressable.
+- Store them under feature-specific `Tests/Editor/Resources`.
 - Load them with `AssetDatabase` using the prefab GUID, not a hardcoded asset path.
-- Do not make framework test prefabs Addressable.
 
 #### Project Tests
 
-- Project test prefabs must be marked as Addressable.
-- Store them under feature-specific `Tests` folders and reference them from a Resources-based `TestAssetConfig` ScriptableObject.
+- Project test assets must be marked as Addressable. Live in a dedicated `Test Assets` Addressables group.
+- Store them under whatever `Tests` folder the test belongs to, out of `Editor` folder.
 - Load them via Addressable `AssetReference`s so they can run in a test Player.
-- Integration tests may load production prefabs, which should be loaded through their existing Addressable `AssetReference`. If there is no existing production prefab, extract the prefab from the scene.
-- Project test-only prefabs should live in a dedicated `Test Assets` Addressables group.
-- Keep `Include in Build` disabled for that group by default.
+- Integration tests may load production assets, which should be loaded through their existing Addressable `AssetReference`. If there is no existing production prefab, extract the prefab from the scene.
+- Keep `Include in Build` disabled for `Test Assets` Addressables group by default.
 - A dedicated test build may temporarily enable `Include in Build`.
 - Production builds must never require manually disabling the test group.
 
