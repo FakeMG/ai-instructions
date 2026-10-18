@@ -33,10 +33,20 @@ Pass this stance to every sub-agent.
 
 ### Rubric source
 
-Read `%USERPROFILE%\.codex\AGENTS.md`, identifies every guideline under `General Coding Guidelines` and `Unity Coding Guidelines`
+Read `%USERPROFILE%\.codex\AGENTS.md`, identifies every guideline under the headers whose title contains `Guidelines`.
 
-- Each guideline is a criterion. Every guideline gets its own sub-agent, named after the guideline it reviews, e.g. Extensible, Simplicity, etc.
-- All coding guidelines are equally important. Do not skip any. If a guideline does not apply, explicitly state why.
+What counts as one guideline
+- Take each `Guidelines` header as a group. Its direct child headings (whatever level they are, one level below the group) are the guideline units.
+- Each unit includes everything nested under it: deeper headings, bullets, code blocks.
+- Default: one unit = one sub agent. Do NOT split a unit by its subheadings.
+- Each sub agent gets the full text of its guideline, including all nested content and have it check every bullet.
+
+When to split
+- Split a unit only if it is too big to review as one or its subheadings cover clearly independent concerns.
+- If split, each direct child heading becomes its own guideline. Apply the same size test recursively to each child. The parent's own content (bullets directly under the parent header, before any child heading) stays under the parent as its own guideline, labeled with the parent's path.
+
+Labeling
+- Label each guideline with its path, e.g. `General > Formatting` or `Unity > Addressables > Core principles`. Same name under different groups = separate guidelines.
 
 ### Subject
 
