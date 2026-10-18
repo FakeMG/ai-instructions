@@ -83,11 +83,9 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 
 ## Organization
 Applies to scripts, assets, any resource.
-
 - Group by context, not type. Keep things used together in the same place.
+- Use type subfolders for things in the same context.
 - Separate owned from shared. If only one project, person, or area uses it, it lives with them. If several do, it goes in a common space.
-- Ask one question: "Does anything else use this?" No means keep it local. Yes, or soon, means move it to shared.
-- Start local, promote later. Don't predict what will be shared. Wait until a second user actually appears, then move it.
 - Keep folders easy to scan; when one grows large or contains distinct responsibilities, divide it into descriptive sub-responsibility folders. Do not split solely to meet a file-count limit.
 
 ---
@@ -110,8 +108,8 @@ Applies to scripts, assets, any resource.
 - Name all ScriptableObjects (classes, variables) with the `SO` suffix (e.g., `EnemyDataSO`, `enemyDataSO`). Any other naming is wrong.
 
 ## Organization
-- Organizing scripts primarily by feature. A feature should own most of the code, prefabs, configs, and tests needed to understand or remove it.
-- Use the following folder structure for features. You don't need every folder for every feature. The separation is conceptual more than ceremonial.:
+- Keep things used together in the same place: organizing scripts primarily by feature. A feature should own most of the code, and tests needed to understand or remove it.
+- Use type subfolders: use the following folder structure for features:
 
 Scripts/Feature/
 ├── Runtime/
@@ -154,7 +152,8 @@ Scripts/Feature/
 - Use tags and layers deliberately. Layers control physics collisions and camera culling, and tags are for quick identification. Don't lean on tags for everything.
 
 ## Organization
-- Keep assets used together in the same place. Always use type subfolders (Materials, Textures, Prefabs, ScriptableObjects, etc.).
+- Keep assets used together in the same place.
+- Use type subfolders: Materials, Textures, Prefabs, ScriptableObjects, etc.
 - Keep assets that are shared between multiple systems in a common location.
 
 ## Addressables
