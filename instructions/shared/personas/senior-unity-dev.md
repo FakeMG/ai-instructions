@@ -51,7 +51,6 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
   - Hardcoded paths and file names: the real file location and a string in code are two copies of the same fact, and a constant doesn't change that. Derive the path from the file system so renames and moves propagate. If a literal path is unavoidable, add a check that fails when it no longer resolves.
 
 ## Others 
-- On any unexpected or non-happy-path branch, emit a clear log message describing why execution is deviating, and never return silently.
 - Avoid lambda expressions for handlers. Always pair subscriptions with unsubscriptions to prevent memory leaks.
 - Separate event subscription logic from core business logic into a dedicated `Subscriber` class.
 
