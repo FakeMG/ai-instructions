@@ -50,6 +50,5 @@ Do not add or use a different library as a substitute for one listed here. If a 
   - Examples: items, entities, structures, recipes, categories, and equipment.
 - Every component implementing `ISaveable` must:
   - Be registered by its system's installer in that installer's persistence install function.
-  - Physically exist as a child somewhere under: `Core Managers Variant.prefab → Save Load System Gameplay`
   - Have a stable and unique `SaveId`.
 - `ManagersLifetimeScope.Configure` is responsible for calling the persistence install function of each system that contains persistence registrations.
