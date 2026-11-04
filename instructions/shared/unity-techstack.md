@@ -28,7 +28,7 @@ Do not add or use a different library as a substitute for one listed here. If a 
 
 ## VContainer
 - Use VContainer for dependency injection and lifetime management.
-- Each system must have its own installer script.
+- Each system should have its own installer script.
 - Keep the installer script inside that system's folder.
 - Each installer must organize its registrations by responsibility.
 - Persistence registrations must be placed in a dedicated persistence install function.
