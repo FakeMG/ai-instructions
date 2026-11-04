@@ -140,7 +140,7 @@ Scripts/Feature/
 
 # Unity Project Guidelines
 
-## Hierarchy
+## Organization - Hierarchy
 - Use empty GameObjects as folders. Group things under parents like --- Environment ---, Enemies, UI, Managers, Lighting. Reset their Transform to (0,0,0) so children's local positions stay predictable.
 - Don't create a group for just one object. Don't turn group objects into prefabs.
 - Keep the hierarchy shallow. Deep nesting makes transforms harder to reason about and can cost a bit of performance, since every child's transform is recalculated when a parent moves.
@@ -150,10 +150,43 @@ Scripts/Feature/
 - Separate visuals from logic. A common pattern is a root object holding the logic and collider, with a child holding the model or sprite. You can then swap, rotate, or animate the visuals without touching gameplay.
 - Use tags and layers deliberately. Layers control physics collisions and camera culling, and tags are for quick identification. Don't lean on tags for everything.
 
-## Organization
+## Organization - Assets
 - Keep assets used together in the same place.
-- Use type subfolders: Materials, Textures, Prefabs, ScriptableObjects, etc.
+  - Keep each item family’s definitions, icons, models, materials, textures, and visual prefabs together.
 - Keep assets that are shared between multiple systems in a common location.
+- Use type subfolders: Materials, Textures, Prefabs, ScriptableObjects, etc.
+
+Feature/
+├── Models/<SubType>/
+├── Materials/<SubType>/
+├── Textures/<SubType>/
+├── Prefabs/<SubType>/
+├── ScriptableObjects/<SubType>/
+└── etc.
+
+## UI
+
+### Canvas rebuilds
+- Split your UI into multiple canvases: one for static elements (backgrounds, frames) and separate ones for frequently changing elements (timers, health bars, scrolling lists).
+- Don’t nest canvases excessively, but do isolate the dynamic parts.
+- Avoid changing values every frame. Only update text or fills when the value actually changes.
+
+### Draw calls and batching
+- Pack sprites that are drawn and loaded together into Sprite Atlases so elements can share a material and batch together.
+- Watch the hierarchy order. Interleaving elements with different materials/textures (image, text, image, text) breaks batching.
+- Avoid unnecessary unique materials per element.
+
+### Layout groups
+- HorizontalLayoutGroup, VerticalLayoutGroup, GridLayoutGroup, and ContentSizeFitter are expensive, especially nested. Use them for static layouts, or set positions manually/in code for dynamic ones.
+- Disable the layout component after the layout is computed if it won’t change.
+
+### Lists and scroll views
+- Use pooling or a virtualized scroll view (reuse a handful of item objects) rather than instantiating hundreds of entries.
+- Pool popups, tooltips, and floating damage numbers rather than constantly instantiating and destroying.
+
+### Interaction and raycasting
+- Disable Raycast Target on anything non-interactive (text, decorative images). This cuts the GraphicRaycaster cost considerably.
+- Remove GraphicRaycaster from canvases that don’t need input.
 
 ## Addressables
 
