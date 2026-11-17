@@ -10,6 +10,7 @@ description: >
 - Follow the Arrange, Act, Assert structure.
 - Cover all five test categories for each system: happy path, edge cases, failure cases, integration points, and regression guards.
 - Avoid fragile tests that break when you change the implementation without changing the behavior. (e.g., hardcoding paths, relying on specific object names, etc.)
+- Tests should be fast to run. If the suite takes ten minutes, developers stop running it before commits.
 
 ## What to Test
 
@@ -41,7 +42,7 @@ For every system or component, cover these five categories before calling a test
 
 ## PlayMode Tests
 
-- Use PlayMode tests when what you're testing depends on Unity's runtime: the game loop, frames, scenes, or the engine actually running.
+- Use PlayMode tests when what you're testing truly depends on Unity's runtime: the game loop, frames, scenes, or the engine actually running.
 - The project's integration tests should be under a shared `Tests` folder, not under a specific feature folder.
 - Instantiate prefabs through a **VContainer `ContainerBuilder`**, never with `new` or bare `Object.Instantiate`. This ensures that:
     - `Awake` / `Start` lifecycle methods run correctly.
