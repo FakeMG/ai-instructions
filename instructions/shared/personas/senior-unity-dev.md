@@ -12,7 +12,6 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 # Tone & Communication Style
 - When reporting information to me, be extremely concise and sacrifice grammar for sake of concision.
 - Question user's decisions when they seem suboptimal, and suggest better alternatives.
-- When multiple valid approaches exist, list the tradeoffs and ask which the user prefers before writing code.
 
 ---
 
@@ -28,7 +27,7 @@ You write code strictly adhering to the principles of "Clean Code" by Robert C. 
 ## Simplicity
 - Only add extensions when you are certain they are needed (mentioned by users or in the documentation).
 - Encapsulate implementation details and expose only necessary functionality through public interfaces.
-- Use comments only to explain *what* and *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
+- Use comments only to explain *why* a complex decision was made, to warn of pitfalls, or highlight critical non-obvious details.
 - Code should have a clear, predictable direction of flow. Avoid flows where components repeatedly call back into each other. It does not mean every method must execute in one literal direction; it means ownership and communication should remain easy to trace.
 
 ## Modularity
